@@ -131,8 +131,10 @@ class Pipeline:
                 total=len(files_by_path), description="Writing files"
             ) as (p, t):
                 for fp, records in files_by_path.items():
+                    file_start = time.perf_counter()
                     try:
                         result = self.writer.apply(fp, records)
+                        result.elapsed_seconds = time.perf_counter() - file_start
                         self.file_results.append(result)
                         if result.write_error:
                             self.errors.append(f"Write error: {fp}: {result.write_error}")

@@ -1,0 +1,242 @@
+from pathlib import Path
+
+from docstring_agent.audit.models import CoverageRecord, CoverageStatus, QualityScore
+from docstring_agent.audit.scorer import QualityScorer
+
+
+def _make_record(
+    existing_docstring: str | None = None,
+    param_count: int = 0,
+    has_return_annotation: bool = False,
+    has_raise_statements: bool = False,
+    cyclomatic_complexity: int = 1,
+    qualified_name: str = "test_func",
+) -> CoverageRecord:
+    return CoverageRecord(
+        file_path=Path("/fake/file.py"),
+        qualified_name=qualified_name,
+        kind="function",
+        start_line=1,
+        status=CoverageStatus.PRESENT if existing_docstring else CoverageStatus.MISSING,
+        existing_docstring=existing_docstring,
+        quality=None,
+        cyclomatic_complexity=cyclomatic_complexity,
+        param_count=param_count,
+        has_return_annotation=has_return_annotation,
+        has_raise_statements=has_raise_statements,
+    )
+
+
+class TestScoreSummary:
+    def test_trivial_one_liner_low_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(existing_docstring="Hi.")
+        dim = scorer._score_summary("Hi.", record)
+        assert dim.score == 0.5
+        assert "Too short" in dim.reason
+
+    def test_complete_sentence_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(existing_docstring="Parse the configuration file.")
+        dim = scorer._score_summary("Parse the configuration file.", record)
+        assert dim.score == 1.0
+        assert "Good summary" in dim.reason
+
+    def test_no_summary_zero_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(existing_docstring="")
+        dim = scorer._score_summary("", record)
+        assert dim.score == 0.0
+        assert "No summary" in dim.reason
+
+    def test_placeholder_todo_zero_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(existing_docstring="TODO implement this")
+        dim = scorer._score_summary("TODO implement this", record)
+        assert dim.score == 0.0
+        assert "Placeholder" in dim.reason
+
+
+class TestScoreArgsCoverage:
+    def test_no_params_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(existing_docstring="Do stuff.", param_count=0)
+        dim = scorer._score_args_coverage("Do stuff.", record)
+        assert dim.score == 1.0
+        assert "N/A" in dim.reason
+
+    def test_two_params_none_documented_zero_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff.
+
+        Returns:
+            int: The result.
+        """
+        record = _make_record(existing_docstring=doc, param_count=2)
+        dim = scorer._score_args_coverage(doc, record)
+        assert dim.score == 0.0
+        assert "no Args section" in dim.reason
+
+    def test_two_params_both_documented_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff.
+
+        Args:
+            x (int): The first param.
+            y (str): The second param.
+
+        Returns:
+            int: The result.
+        """
+        record = _make_record(existing_docstring=doc, param_count=2)
+        dim = scorer._score_args_coverage(doc, record)
+        assert dim.score == 1.0
+        assert "2/2" in dim.reason
+
+    def test_two_params_one_documented_partial_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff.
+
+        Args:
+            x (int): The first param.
+        """
+        record = _make_record(existing_docstring=doc, param_count=2)
+        dim = scorer._score_args_coverage(doc, record)
+        assert dim.score == 0.5
+        assert "1/2" in dim.reason
+
+
+class TestScoreReturns:
+    def test_no_return_annotation_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(existing_docstring="Do stuff.", has_return_annotation=False)
+        dim = scorer._score_returns("Do stuff.", record)
+        assert dim.score == 1.0
+        assert "N/A" in dim.reason
+
+    def test_return_annotation_missing_section_zero_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff."""
+        record = _make_record(existing_docstring=doc, has_return_annotation=True)
+        dim = scorer._score_returns(doc, record)
+        assert dim.score == 0.0
+        assert "Missing Returns" in dim.reason
+
+    def test_return_annotation_with_section_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff.
+
+        Returns:
+            int: The result.
+        """
+        record = _make_record(existing_docstring=doc, has_return_annotation=True)
+        dim = scorer._score_returns(doc, record)
+        assert dim.score == 1.0
+        assert "present" in dim.reason
+
+
+class TestScoreSpecificity:
+    def test_placeholder_deduction(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(
+            existing_docstring="This method does stuff.",
+            cyclomatic_complexity=1,
+        )
+        dim = scorer._score_specificity("This method does stuff.", record)
+        assert dim.score < 1.0
+
+    def test_adequate_length_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        long_doc = "Parse the configuration file and return a dictionary of settings."
+        record = _make_record(
+            existing_docstring=long_doc,
+            cyclomatic_complexity=1,
+        )
+        dim = scorer._score_specificity(long_doc, record)
+        assert dim.score >= 0.9
+
+
+class TestScoreRaises:
+    def test_no_raises_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        record = _make_record(existing_docstring="Do stuff.", has_raise_statements=False)
+        dim = scorer._score_raises("Do stuff.", record)
+        assert dim.score == 1.0
+        assert "No raises" in dim.reason
+
+    def test_raises_missing_section_zero_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff."""
+        record = _make_record(existing_docstring=doc, has_raise_statements=True)
+        dim = scorer._score_raises(doc, record)
+        assert dim.score == 0.0
+        assert "Missing Raises" in dim.reason
+
+    def test_raises_with_section_full_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff.
+
+        Raises:
+            ValueError: If input is invalid.
+        """
+        record = _make_record(existing_docstring=doc, has_raise_statements=True)
+        dim = scorer._score_raises(doc, record)
+        assert dim.score == 1.0
+        assert "present" in dim.reason
+
+
+class TestComposite:
+    def test_weights_sum_to_one(self) -> None:
+        total = sum(QualityScorer.WEIGHTS.values())
+        assert abs(total - 1.0) < 0.001
+
+    def test_perfect_docstring_scores_high(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Parse the configuration file.
+
+        Args:
+            path (str): The file path.
+
+        Returns:
+            dict: Parsed config.
+        """
+        record = _make_record(
+            existing_docstring=doc,
+            param_count=1,
+            has_return_annotation=True,
+            cyclomatic_complexity=2,
+        )
+        qs = scorer.score(record)
+        assert qs.composite > 0.8
+
+    def test_missing_returns_drags_score(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = """Do stuff."""
+        record = _make_record(
+            existing_docstring=doc,
+            param_count=0,
+            has_return_annotation=True,
+        )
+        qs = scorer.score(record)
+        assert qs.composite < 0.85
+
+    def test_composite_manual_calculation(self) -> None:
+        scorer = QualityScorer(0.65)
+        doc = "Do stuff."
+        record = _make_record(
+            existing_docstring=doc,
+            param_count=0,
+            has_return_annotation=False,
+            has_raise_statements=False,
+            cyclomatic_complexity=1,
+        )
+        qs = scorer.score(record)
+        # "Do stuff." has 9 chars → summary score 0.5 (short), specificity = (9/30 + 1.0)/2 = 0.65
+        expected = (
+            0.5 * 0.25        # summary
+            + 1.0 * 0.25      # args_coverage (N/A)
+            + 1.0 * 0.20      # returns (N/A)
+            + 0.65 * 0.15     # specificity
+            + 1.0 * 0.15      # raises (N/A)
+        )
+        assert abs(qs.composite - expected) < 0.01

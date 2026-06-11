@@ -67,6 +67,19 @@ class DocstringGenConfig:
     use_cache: bool = True
 
 
+@dataclass
+class AuditConfig:
+    quality_threshold: float = 0.65
+    min_coverage: float = 1.0
+    include_private: bool = False
+    include_dunders: bool = False
+    sort_by: str = "score"
+    default_formats: list[str] = field(default_factory=lambda: ["console"])
+    json_report_path: str = "docstring_report.json"
+    markdown_report_path: str = ""
+    fail_under: Optional[float] = None
+
+
 CRITICAL_KEYS: set[str] = {
     "app.name",
     "app.log_level",
@@ -80,11 +93,18 @@ _config_instance: Optional["Config"] = None
 
 class Config:
     """Config."""
-    def __init__(self, app: AppConfig, llm: LLMConfig, docstring_gen: DocstringGenConfig) -> None:
+    def __init__(
+        self,
+        app: AppConfig,
+        llm: LLMConfig,
+        docstring_gen: DocstringGenConfig,
+        audit: Optional[AuditConfig] = None,
+    ) -> None:
         """Initialise Config."""
         self.app = app
         self.llm = llm
         self.docstring_gen = docstring_gen
+        self.audit = audit
 
     @classmethod
     def get_instance(cls, config_path: Optional[str | Path] = None) -> "Config":
@@ -128,6 +148,7 @@ class Config:
         app_data = raw.get("app", {})
         llm_data = raw.get("llm", {})
         docstring_data = raw.get("docstring_gen", {})
+        audit_data = raw.get("audit", {})
 
         app = AppConfig(
             name=app_data.get("name", "docstring-agent"),
@@ -159,7 +180,20 @@ class Config:
             use_cache=docstring_data.get("use_cache", True),
         )
 
-        return cls(app=app, llm=llm, docstring_gen=docstring_gen)
+        audit_defaults = AuditConfig()
+        audit = AuditConfig(
+            quality_threshold=audit_data.get("quality_threshold", audit_defaults.quality_threshold),
+            min_coverage=audit_data.get("min_coverage", audit_defaults.min_coverage),
+            include_private=audit_data.get("include_private", audit_defaults.include_private),
+            include_dunders=audit_data.get("include_dunders", audit_defaults.include_dunders),
+            sort_by=audit_data.get("sort_by", audit_defaults.sort_by),
+            default_formats=audit_data.get("default_formats", audit_defaults.default_formats),
+            json_report_path=audit_data.get("json_report_path", audit_defaults.json_report_path),
+            markdown_report_path=audit_data.get("markdown_report_path", audit_defaults.markdown_report_path),
+            fail_under=audit_data.get("fail_under", audit_defaults.fail_under),
+        )
+
+        return cls(app=app, llm=llm, docstring_gen=docstring_gen, audit=audit)
 
     def _section_table(self, title: str, items: list[tuple[str, str]]) -> Panel:
         """ section table."""
@@ -244,5 +278,16 @@ class Config:
                 "dry_run": self.docstring_gen.dry_run,
                 "improve_existing": self.docstring_gen.improve_existing,
                 "use_cache": self.docstring_gen.use_cache,
+            },
+            "audit": {
+                "quality_threshold": self.audit.quality_threshold if self.audit else 0.65,
+                "min_coverage": self.audit.min_coverage if self.audit else 1.0,
+                "include_private": self.audit.include_private if self.audit else False,
+                "include_dunders": self.audit.include_dunders if self.audit else False,
+                "sort_by": self.audit.sort_by if self.audit else "score",
+                "default_formats": self.audit.default_formats if self.audit else ["console"],
+                "json_report_path": self.audit.json_report_path if self.audit else "",
+                "markdown_report_path": self.audit.markdown_report_path if self.audit else "",
+                "fail_under": self.audit.fail_under if self.audit else None,
             },
         }

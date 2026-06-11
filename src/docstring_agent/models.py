@@ -53,6 +53,7 @@ class FileResult:
     methods_improved: int = 0
     methods_skipped: int = 0
     llm_tokens_used: int = 0
+    elapsed_seconds: float = 0.0
 
 
 @dataclass

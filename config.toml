@@ -31,3 +31,13 @@ llm_batch_size = 10
 dry_run = false
 improve_existing = true
 use_cache = true
+
+[audit]
+quality_threshold = 0.65
+min_coverage = 1.0
+include_private = false
+include_dunders = false
+sort_by = "score"
+default_formats = ["console"]
+json_report_path = "docstring_report.json"
+markdown_report_path = ""

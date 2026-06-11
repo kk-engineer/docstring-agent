@@ -15,7 +15,9 @@ dependencies = [
 ]
 
 [project.scripts]
-docstring-agent = "docstring_agent.cli:main"
+docstring-agent = "docstring_agent.cli:cli"
+docstring-agent-generate = "docstring_agent.cli:generate"
+docstring-agent-audit = "docstring_agent.cli:audit"
 
 [build-system]
 requires = ["hatchling"]
