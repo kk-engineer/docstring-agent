@@ -16,7 +16,7 @@ class PromptBuilder:
         """    Build and return a repair batch.
 
     Args:
-        items (list[RepairWorkItem]): Description.
+        items (list[RepairWorkItem]): Collection of items.
 
     Returns:
         str: Description.
@@ -61,7 +61,7 @@ class PromptBuilder:
         """    Build and return a full generation batch.
 
     Args:
-        items (list[RepairWorkItem]): Description.
+        items (list[RepairWorkItem]): Collection of items.
 
     Returns:
         str: Description.

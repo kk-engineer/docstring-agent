@@ -19,7 +19,7 @@ class Enricher:
         """    Enrich.
 
     Args:
-        records (list[MethodRecord]): Description.
+        records (list[MethodRecord]): Collection of records.
 
     Returns:
         list[MethodRecord]: Description.
@@ -47,7 +47,7 @@ class Enricher:
         """     compute complexity.
 
     Args:
-        record (MethodRecord): Description.
+        record (MethodRecord): Record.
     """
         try:
             blocks = cc_visit(record.full_body)
@@ -62,7 +62,7 @@ class Enricher:
         """     route.
 
     Args:
-        record (MethodRecord): Description.
+        record (MethodRecord): Record.
 
     Returns:
         RouteDecision: Description.

@@ -121,7 +121,7 @@ class Config:
         """    Return instance.
 
     Args:
-        config_path (Optional[str | Path]): Description.
+        config_path (Optional[str | Path]): Path to the config.
 
     Returns:
         "Config": Description.
@@ -137,7 +137,7 @@ class Config:
         """     load.
 
     Args:
-        config_path (str | Path): Description.
+        config_path (str | Path): Path to the config.
 
     Returns:
         "Config": Description.
@@ -230,8 +230,8 @@ class Config:
         """     section table.
 
     Args:
-        title (str): Description.
-        items (list[tuple[str, str]]): Description.
+        title (str): Title.
+        items (list[tuple[str, str]]): Collection of items.
 
     Returns:
         Panel: Description.
@@ -292,7 +292,7 @@ class Config:
         """    To dict.
 
     Args:
-        mask_secrets (bool): Description.
+        mask_secrets (bool): Mask secrets.
 
     Returns:
         dict[str, Any]: Description.

@@ -34,7 +34,7 @@ class AuditReportReader:
         """    Load.
 
     Args:
-        report_path (Path): Description.
+        report_path (Path): Path to the report.
 
     Returns:
         list[RepairWorkItem]: Description.
@@ -127,7 +127,7 @@ class AuditReportReader:
         """     validate schema.
 
     Args:
-        data (dict[str, Any]): Description.
+        data (dict[str, Any]): Input data to process.
     """
         if "files" not in data:
             raise AuditReportSchemaError("Missing 'files' key in audit report")
@@ -143,7 +143,7 @@ class AuditReportReader:
         """     reparse file.
 
     Args:
-        abs_path (Path): Description.
+        abs_path (Path): Path to the abs.
 
     Returns:
         list[MethodRecord]: Description.
@@ -163,9 +163,9 @@ class AuditReportReader:
         """     find method record.
 
     Args:
-        records (list[MethodRecord]): Description.
-        qualified_name (str): Description.
-        start_line (int): Description.
+        records (list[MethodRecord]): Collection of records.
+        qualified_name (str): Qualified name.
+        start_line (int): Start line.
 
     Returns:
         Optional[MethodRecord]: Description.
@@ -188,6 +188,18 @@ class AuditReportReader:
         quality_data: Any,
         start_line: int,
     ) -> CoverageRecord:
+        """     build coverage record.
+
+    Args:
+        file_path (Path): Path to the file.
+        qualified_name (str): Qualified name.
+        status_str (str): Status str.
+        quality_data (Any): Quality data.
+        start_line (int): Start line.
+
+    Returns:
+        CoverageRecord: Description.
+    """
         status = CoverageStatus(status_str)
         quality: Optional[QualityScore] = None
         if isinstance(quality_data, dict):

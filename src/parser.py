@@ -15,8 +15,8 @@ def _get_kind(node: cst.FunctionDef, in_class: bool) -> str:
     """     get kind.
 
     Args:
-        node (cst.FunctionDef): Description.
-        in_class (bool): Description.
+        node (cst.FunctionDef): Node.
+        in_class (bool): In class.
 
     Returns:
         str: Description.
@@ -36,8 +36,8 @@ def _annotation_str(module: cst.Module, annotation: Optional[cst.BaseExpression]
     """     annotation str.
 
     Args:
-        module (cst.Module): Description.
-        annotation (Optional[cst.BaseExpression]): Description.
+        module (cst.Module): Module.
+        annotation (Optional[cst.BaseExpression]): Annotation.
 
     Returns:
         Optional[str]: Description.
@@ -51,7 +51,7 @@ def _extract_docstring(node: cst.FunctionDef | cst.ClassDef) -> Optional[str]:
     """     extract docstring.
 
     Args:
-        node (cst.FunctionDef | cst.ClassDef): Description.
+        node (cst.FunctionDef | cst.ClassDef): Node.
 
     Returns:
         Optional[str]: Description.
@@ -77,9 +77,9 @@ def _body_source(source_lines: list[str], node: cst.FunctionDef | cst.ClassDef, 
     """     body source.
 
     Args:
-        source_lines (list[str]): Description.
-        node (cst.FunctionDef | cst.ClassDef): Description.
-        pos (tuple): Description.
+        source_lines (list[str]): Source lines.
+        node (cst.FunctionDef | cst.ClassDef): Node.
+        pos (tuple): Pos.
 
     Returns:
         str: Description.
@@ -105,8 +105,8 @@ def _body_first_200(source_lines: list[str], node: cst.FunctionDef | cst.ClassDe
     """     body first 200.
 
     Args:
-        source_lines (list[str]): Description.
-        node (cst.FunctionDef | cst.ClassDef): Description.
+        source_lines (list[str]): Source lines.
+        node (cst.FunctionDef | cst.ClassDef): Node.
 
     Returns:
         str: Description.
@@ -123,8 +123,8 @@ def _get_body_text(source_lines: list[str],
     """     get body text.
 
     Args:
-        source_lines (list[str]): Description.
-        node ("cst.FunctionDef | cst.ClassDef"): Description.
+        source_lines (list[str]): Source lines.
+        node ("cst.FunctionDef | cst.ClassDef"): Node.
 
     Returns:
         str: Description.
@@ -159,8 +159,8 @@ def _get_node_end_line(node: cst.CSTNode, source_lines: list[str]) -> int:
     """     get node end line.
 
     Args:
-        node (cst.CSTNode): Description.
-        source_lines (list[str]): Description.
+        node (cst.CSTNode): Node.
+        source_lines (list[str]): Source lines.
 
     Returns:
         int: Description.
@@ -175,7 +175,7 @@ def _pos_for_node(node: cst.CSTNode):
     """     pos for node.
 
     Args:
-        node (cst.CSTNode): Description.
+        node (cst.CSTNode): Node.
     """
     lineno = getattr(node, "lineno", 1)
     col = getattr(node, "col_offset", 0)
@@ -204,7 +204,7 @@ class _RecordCollector(cst.CSTVisitor):
         """     qualified.
 
     Args:
-        name (str): Description.
+        name (str): Name of the entity.
 
     Returns:
         str: Description.
@@ -217,7 +217,7 @@ class _RecordCollector(cst.CSTVisitor):
         """    Visit classdef.
 
     Args:
-        node (cst.ClassDef): Description.
+        node (cst.ClassDef): Node.
 
     Returns:
         Optional[bool]: Description.
@@ -253,7 +253,7 @@ class _RecordCollector(cst.CSTVisitor):
         """    Leave classdef.
 
     Args:
-        node (cst.ClassDef): Description.
+        node (cst.ClassDef): Node.
     """
         self._class_stack.pop()
 
@@ -261,7 +261,7 @@ class _RecordCollector(cst.CSTVisitor):
         """    Visit functiondef.
 
     Args:
-        node (cst.FunctionDef): Description.
+        node (cst.FunctionDef): Node.
 
     Returns:
         Optional[bool]: Description.
@@ -309,7 +309,7 @@ class _RecordCollector(cst.CSTVisitor):
         """    Visit classdef body.
 
     Args:
-        node (cst.ClassDef): Description.
+        node (cst.ClassDef): Node.
     """
         pass
 
@@ -325,7 +325,7 @@ class CSTParser:
         """    Parse file and return the result.
 
     Args:
-        file_path (Path): Description.
+        file_path (Path): Path to the file.
 
     Returns:
         list[MethodRecord]: Description.
@@ -356,7 +356,7 @@ class CSTParser:
         """     is trivial body.
 
     Args:
-        body_source (str): Description.
+        body_source (str): Body source.
 
     Returns:
         bool: Description.

@@ -59,56 +59,32 @@ class FileAuditResult:
 
     @property
     def total(self) -> int:
-        """    Total.
-
-        Returns:
-            int: The total value.
-    """
+        """Total."""
         return len(self.records)
 
     @property
     def coverage_count(self) -> int:
-        """    Coverage count.
-
-        Returns:
-            int: Description.
-    """
+        """Coverage count."""
         return sum(1 for r in self.records if r.status == CoverageStatus.PRESENT)
 
     @property
     def missing_count(self) -> int:
-        """    Missing count.
-
-        Returns:
-            int: Description.
-    """
+        """Missing count."""
         return sum(1 for r in self.records if r.status == CoverageStatus.MISSING)
 
     @property
     def partial_count(self) -> int:
-        """    Partial count.
-
-        Returns:
-            int: Description.
-    """
+        """Partial count."""
         return sum(1 for r in self.records if r.status == CoverageStatus.PARTIAL)
 
     @property
     def coverage_pct(self) -> float:
-        """    Coverage pct.
-
-        Returns:
-            float: Description.
-    """
+        """Coverage pct."""
         return self.coverage_count / self.total if self.total else 1.0
 
     @property
     def mean_quality(self) -> Optional[float]:
-        """    Mean quality.
-
-        Returns:
-            Optional[float]: Description.
-    """
+        """Mean quality."""
         scored = [r.quality.composite for r in self.records if r.quality]
         return sum(scored) / len(scored) if scored else None
 

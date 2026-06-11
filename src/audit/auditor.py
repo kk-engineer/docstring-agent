@@ -22,7 +22,7 @@ class CoverageAuditor:
         """    Audit.
 
     Args:
-        records (list[MethodRecord]): Description.
+        records (list[MethodRecord]): Collection of records.
 
     Returns:
         list[CoverageRecord]: Description.
@@ -61,7 +61,7 @@ class CoverageAuditor:
         """     apply filters.
 
     Args:
-        records (list[MethodRecord]): Description.
+        records (list[MethodRecord]): Collection of records.
 
     Returns:
         list[MethodRecord]: Description.
@@ -88,7 +88,7 @@ class CoverageAuditor:
         """     to coverage record.
 
     Args:
-        record (MethodRecord): Description.
+        record (MethodRecord): Record.
 
     Returns:
         CoverageRecord: Description.
@@ -117,7 +117,7 @@ class CoverageAuditor:
         """     classify.
 
     Args:
-        record (MethodRecord): Description.
+        record (MethodRecord): Record.
 
     Returns:
         CoverageStatus: Description.
@@ -160,7 +160,7 @@ class CoverageAuditor:
         """     get summary line.
 
     Args:
-        doc (str): Description.
+        doc (str): Doc.
 
     Returns:
         str: Description.
@@ -175,8 +175,8 @@ class CoverageAuditor:
         """     has section.
 
     Args:
-        docstring (str): Description.
-        patterns (list[str]): Description.
+        docstring (str): Docstring.
+        patterns (list[str]): Patterns.
 
     Returns:
         bool: Description.
@@ -190,7 +190,7 @@ class CoverageAuditor:
         """     count params.
 
     Args:
-        record (MethodRecord): Description.
+        record (MethodRecord): Record.
 
     Returns:
         int: Description.
@@ -201,7 +201,7 @@ class CoverageAuditor:
         """     has raise statements.
 
     Args:
-        body (str): Description.
+        body (str): Body.
 
     Returns:
         bool: Description.
@@ -212,7 +212,7 @@ class CoverageAuditor:
         """     compute complexity.
 
     Args:
-        record (MethodRecord): Description.
+        record (MethodRecord): Record.
 
     Returns:
         int: Description.

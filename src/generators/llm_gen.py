@@ -24,7 +24,7 @@ class LLMGenerator:
         """    Generate batch.
 
     Args:
-        records (list[MethodRecord]): Description.
+        records (list[MethodRecord]): Collection of records.
 
     Returns:
         list[MethodRecord]: Description.
@@ -42,8 +42,8 @@ class LLMGenerator:
         """     generate one batch.
 
     Args:
-        batch_idx (int): Description.
-        batch (list[MethodRecord]): Description.
+        batch_idx (int): Batch idx.
+        batch (list[MethodRecord]): Batch.
     """
         methods_json = []
         for r in batch:
@@ -93,8 +93,8 @@ class LLMGenerator:
         """     parse response.
 
     Args:
-        response (str): Description.
-        batch (list[MethodRecord]): Description.
+        response (str): Response object.
+        batch (list[MethodRecord]): Batch.
 
     Returns:
         list[dict] | None: Description.
@@ -117,7 +117,7 @@ class LLMGenerator:
         """     fallback.
 
     Args:
-        batch (list[MethodRecord]): Description.
+        batch (list[MethodRecord]): Batch.
     """
         for r in batch:
             r.generated_docstring = self._fallback_gen.generate(r)
@@ -126,7 +126,7 @@ class LLMGenerator:
         """    Generate sync.
 
     Args:
-        records (list[MethodRecord]): Description.
+        records (list[MethodRecord]): Collection of records.
 
     Returns:
         list[MethodRecord]: Description.

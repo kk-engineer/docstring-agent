@@ -43,9 +43,9 @@ class ReportFormatter:
         """    Build.
 
     Args:
-        file_results (list[FileAuditResult]): Description.
-        elapsed (float): Description.
-        repo_path (Optional[Path]): Description.
+        file_results (list[FileAuditResult]): File results.
+        elapsed (float): Elapsed.
+        repo_path (Optional[Path]): Path to the repo.
 
     Returns:
         AuditReport: Description.
@@ -74,7 +74,7 @@ class ReportFormatter:
         """     aggregate.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         report.total_files = len(report.file_results)
         report.total_methods = sum(f.total for f in report.file_results)
@@ -131,7 +131,7 @@ class ReportFormatter:
         """    Render console.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         self._render_header(report)
         self._render_coverage_table(report)
@@ -147,7 +147,7 @@ class ReportFormatter:
         """     render header.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         header = Panel(
             Text(
@@ -165,7 +165,7 @@ class ReportFormatter:
         """     render coverage table.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         table = Table(
             title="Coverage by File",
@@ -223,7 +223,7 @@ class ReportFormatter:
         """     render missing list.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         self._console.print()
         self._console.print(
@@ -250,7 +250,7 @@ class ReportFormatter:
         """     render partial list.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         self._console.print()
         self._console.print(
@@ -294,7 +294,7 @@ class ReportFormatter:
         """     render quality table.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         self._console.print()
         table = Table(
@@ -352,7 +352,7 @@ class ReportFormatter:
         """     render gate summary.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
     """
         self._console.print()
         cov_gate = report.passes_coverage_gate
@@ -388,7 +388,7 @@ class ReportFormatter:
         """    Render json.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
 
     Returns:
         str: Description.
@@ -520,7 +520,7 @@ class ReportFormatter:
         """    Render markdown.
 
     Args:
-        report (AuditReport): Description.
+        report (AuditReport): Report.
 
     Returns:
         str: Description.
@@ -658,7 +658,7 @@ class ReportFormatter:
         """     score bar.
 
     Args:
-        score (float): Description.
+        score (float): Score.
 
     Returns:
         str: Description.

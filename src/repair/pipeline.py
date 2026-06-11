@@ -39,7 +39,7 @@ class RepairPipeline:
         """    Run.
 
     Args:
-        report_path (Optional[Path]): Description.
+        report_path (Optional[Path]): Path to the report.
 
     Returns:
         RepairSummary: Description.
@@ -61,7 +61,7 @@ class RepairPipeline:
         """     step load report.
 
     Args:
-        report_path (Path): Description.
+        report_path (Path): Path to the report.
 
     Returns:
         list[RepairWorkItem]: Description.
@@ -104,7 +104,7 @@ class RepairPipeline:
         """     find method record.
 
     Args:
-        cr (CoverageRecord): Description.
+        cr (CoverageRecord): Cr.
 
     Returns:
         Optional[MethodRecord]: Description.
@@ -122,7 +122,7 @@ class RepairPipeline:
         """     step plan.
 
     Args:
-        items (list[RepairWorkItem]): Description.
+        items (list[RepairWorkItem]): Collection of items.
 
     Returns:
         list[RepairWorkItem]: Description.
@@ -136,7 +136,7 @@ class RepairPipeline:
         """     step execute.
 
     Args:
-        items (list[RepairWorkItem]): Description.
+        items (list[RepairWorkItem]): Collection of items.
 
     Returns:
         list[RepairResult]: Description.
@@ -150,8 +150,8 @@ class RepairPipeline:
         """     build summary.
 
     Args:
-        results (list[RepairResult]): Description.
-        start (float): Description.
+        results (list[RepairResult]): Collection of results.
+        start (float): Start.
 
     Returns:
         RepairSummary: Description.

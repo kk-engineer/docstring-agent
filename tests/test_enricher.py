@@ -15,8 +15,8 @@ def _make_config(
     """     make config.
 
     Args:
-        improve_existing (bool): Description.
-        complexity_threshold (int): Description.
+        improve_existing (bool): Improve existing.
+        complexity_threshold (int): Complexity threshold.
 
     Returns:
         Config: Description.
@@ -50,13 +50,13 @@ def _record(
     """     record.
 
     Args:
-        name (str): Description.
-        kind (str): Description.
-        params (list | None): Description.
-        return_ann (str | None): Description.
-        existing (str | None): Description.
-        complexity (int): Description.
-        body (str): Description.
+        name (str): Name of the entity.
+        kind (str): Kind.
+        params (list | None): Parameters used by the operation.
+        return_ann (str | None): Return ann.
+        existing (str | None): Existing.
+        complexity (int): Complexity.
+        body (str): Body.
 
     Returns:
         MethodRecord: Description.
@@ -152,7 +152,7 @@ def test_complexity_computation(mock_cc_visit) -> None:
     """    Test complexity computation.
 
     Args:
-        mock_cc_visit (Any): Description.
+        mock_cc_visit (Any): Mock cc visit.
     """
     from collections import namedtuple
     FakeBlock = namedtuple("FakeBlock", ["complexity"])

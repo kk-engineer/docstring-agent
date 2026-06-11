@@ -30,11 +30,7 @@ class AuditPipeline:
         self.start_time: float = 0.0
 
     async def run(self) -> AuditReport:
-        """    Run the audit pipeline, returning an AuditReport object with detailed results.
-
-        Returns:
-          AuditReport
-    """
+        """Run."""
         self.start_time = time.perf_counter()
         await self._step_discover()
         file_results = await self._step_audit()
@@ -95,7 +91,7 @@ class AuditPipeline:
         """     step score.
 
     Args:
-        file_results (list[FileAuditResult]): Description.
+        file_results (list[FileAuditResult]): File results.
     """
         quality_threshold = (
             self.audit_config.quality_threshold if self.audit_config else 0.65

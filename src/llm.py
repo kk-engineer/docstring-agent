@@ -39,7 +39,7 @@ class LLMClient:
         """    Return instance.
 
     Args:
-        config (Any): Description.
+        config (Any): Configuration values.
 
     Returns:
         "LLMClient": Description.
@@ -72,8 +72,8 @@ class LLMClient:
         """     acomplete.
 
     Args:
-        prompt (str): Description.
-        system (Optional[str]): Description.
+        prompt (str): Prompt.
+        system (Optional[str]): System.
 
     Returns:
         str: Description.
@@ -107,8 +107,8 @@ class LLMClient:
         """    Complete.
 
     Args:
-        prompt (str): Description.
-        system (Optional[str]): Description.
+        prompt (str): Prompt.
+        system (Optional[str]): System.
 
     Returns:
         str: Description.
@@ -147,9 +147,9 @@ class LLMClient:
         """    Complete structured.
 
     Args:
-        prompt (str): Description.
-        output_schema (Dict[str, Any]): Description.
-        system (Optional[str]): Description.
+        prompt (str): Prompt.
+        output_schema (Dict[str, Any]): Output schema.
+        system (Optional[str]): System.
 
     Returns:
         Dict[str, Any]: Description.

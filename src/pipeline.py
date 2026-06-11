@@ -45,7 +45,7 @@ class Pipeline:
         """    Set llm client.
 
     Args:
-        llm_client (LLMClient): Description.
+        llm_client (LLMClient): Llm client.
     """
         self.llm_client = llm_client
         self.llm_gen = LLMGenerator(
@@ -55,11 +55,7 @@ class Pipeline:
         )
 
     async def run(self) -> PipelineSummary:
-        """    Run.
-
-    Returns:
-        PipelineSummary: Description.
-    """
+        """Run."""
         self.start_time = time.perf_counter()
         await self.step_discover()
         await self.step_parse()

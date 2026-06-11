@@ -131,16 +131,16 @@ def generate(
     """    Generate.
 
     Args:
-        repo_path (Path): Description.
-        config (Path): Description.
-        dry_run (bool | None): Description.
-        style (str | None): Description.
-        improve (bool | None): Description.
-        include (tuple[Path, ...]): Description.
-        exclude (tuple[Path, ...]): Description.
-        llm_only (bool): Description.
-        no_llm (bool): Description.
-        show_summary (bool): Description.
+        repo_path (Path): Path to the repo.
+        config (Path): Configuration values.
+        dry_run (bool | None): Dry run.
+        style (str | None): Style.
+        improve (bool | None): Improve.
+        include (tuple[Path, ...]): Include.
+        exclude (tuple[Path, ...]): Exclude.
+        llm_only (bool): Llm only.
+        no_llm (bool): No llm.
+        show_summary (bool): Show summary.
     """
     hf_key = os.environ.get("hf_api_key", "")
     if hf_key:
@@ -304,16 +304,16 @@ def audit(
     """    Audit.
 
     Args:
-        repo_path (Path): Description.
-        config (Path): Description.
-        formats (tuple[str, ...]): Description.
-        output (Path | None): Description.
-        threshold (float | None): Description.
-        min_coverage (float | None): Description.
-        include_private (bool): Description.
-        include_dunders (bool): Description.
-        sort_by (str | None): Description.
-        fail_under (float | None): Description.
+        repo_path (Path): Path to the repo.
+        config (Path): Configuration values.
+        formats (tuple[str, ...]): Formats.
+        output (Path | None): Output.
+        threshold (float | None): Threshold.
+        min_coverage (float | None): Min coverage.
+        include_private (bool): Include private.
+        include_dunders (bool): Include dunders.
+        sort_by (str | None): Sort by.
+        fail_under (float | None): Fail under.
     """
     config_target = Path(config)
     if not config_target.exists():
@@ -494,14 +494,14 @@ def repair(
     """    Repair.
 
     Args:
-        repo_path (Path): Description.
-        config (Path): Description.
-        report (Path | None): Description.
-        dry_run (bool): Description.
-        no_llm (bool): Description.
-        token_budget (int | None): Description.
-        no_backup (bool): Description.
-        show_summary (bool): Description.
+        repo_path (Path): Path to the repo.
+        config (Path): Configuration values.
+        report (Path | None): Report.
+        dry_run (bool): Dry run.
+        no_llm (bool): No llm.
+        token_budget (int | None): Token budget.
+        no_backup (bool): No backup.
+        show_summary (bool): Show summary.
     """
     config_target = Path(config)
     if not config_target.exists():
@@ -566,7 +566,7 @@ def _print_file_table(pipeline) -> None:
     """     print file table.
 
     Args:
-        pipeline (Any): Description.
+        pipeline (Any): Pipeline.
     """
     from .logger import Logger
     logger = Logger.get_instance()
@@ -592,7 +592,7 @@ def _print_summary(summary) -> None:
     """     print summary.
 
     Args:
-        summary (Any): Description.
+        summary (Any): Summary.
     """
     from .logger import Logger
 
@@ -620,7 +620,7 @@ def _print_repair_summary(summary) -> None:
     """     print repair summary.
 
     Args:
-        summary (Any): Description.
+        summary (Any): Summary.
     """
     from .logger import Logger
 

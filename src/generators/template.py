@@ -13,7 +13,7 @@ class TemplateGenerator:
         """    Generate.
 
     Args:
-        record (MethodRecord): Description.
+        record (MethodRecord): Record.
 
     Returns:
         str: Description.
@@ -25,8 +25,8 @@ class TemplateGenerator:
         """     summary.
 
     Args:
-        name (str): Description.
-        record (MethodRecord): Description.
+        name (str): Name of the entity.
+        record (MethodRecord): Record.
 
     Returns:
         str: Description.

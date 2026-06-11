@@ -5,6 +5,9 @@ import re
 from typing import Optional
 
 from ..models import MethodRecord
+from ..semantic.purpose_extractor import PurposeExtractor
+from ..semantic.purpose_synthesizer import PurposeSynthesizer
+from ..semantic.scoring import PurposeScorer
 
 
 class HeuristicGenerator:
@@ -12,6 +15,9 @@ class HeuristicGenerator:
     def __init__(self, style: str) -> None:
         """Initialise HeuristicGenerator."""
         self.style = style
+        self._purpose_extractor = PurposeExtractor()
+        self._purpose_scorer = PurposeScorer()
+        self._purpose_synthesizer = PurposeSynthesizer()
 
     def generate(self, record: MethodRecord) -> str:
         """    Generate.
@@ -28,7 +34,10 @@ class HeuristicGenerator:
         parts: list[str] = []
 
         # Summary
-        parts.append(self._summary_line(name))
+        summary = self._generate_purpose_summary(record)
+        if summary is None:
+            summary = self._summary_line(name)
+        parts.append(summary)
 
         # Args
         public_params = [
@@ -52,6 +61,49 @@ class HeuristicGenerator:
             self._append_raises(parts, exceptions)
 
         return "\n".join(parts)
+
+    def _generate_purpose_summary(self, record: MethodRecord) -> str | None:
+        """     generate purpose summary.
+
+    Args:
+        record (MethodRecord): Record.
+
+    Returns:
+        str | None: Description.
+    """
+        from ..logger import Logger
+
+        logger = Logger.get_instance()
+        try:
+            facts = self._purpose_extractor.extract(record.full_body)
+            if not facts.outcomes and not facts.major_steps and not facts.side_effects:
+                logger.debug(
+                    f"Purpose extraction: no meaningful purpose inferred "
+                    f"for {record.qualified_name}, using name-based summary"
+                )
+                return None
+            self._purpose_scorer.score(facts)
+            summary = self._purpose_synthesizer.synthesize(facts)
+            if summary is None:
+                logger.debug(
+                    f"Purpose extraction: synthesis returned None "
+                    f"for {record.qualified_name}"
+                )
+                return None
+            logger.debug(
+                f"Purpose extraction for {record.qualified_name}: "
+                f"outcomes={facts.outcomes} "
+                f"steps={facts.major_steps} "
+                f"confidence={facts.confidence:.2f} "
+                f"summary={summary!r}"
+            )
+            return summary
+        except Exception:
+            logger.debug(
+                f"Purpose extraction: exception for {record.qualified_name}, "
+                f"using name-based fallback"
+            )
+            return None
 
     def _summary_line(self, name: str) -> str:
         """     summary line.

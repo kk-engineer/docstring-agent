@@ -24,7 +24,7 @@ class _DocstringInserter(cst.CSTTransformer):
         """     qualified.
 
     Args:
-        name (str): Description.
+        name (str): Name of the entity.
 
     Returns:
         str: Description.
@@ -37,7 +37,7 @@ class _DocstringInserter(cst.CSTTransformer):
         """     get body indent.
 
     Args:
-        original_body (cst.BaseSuite): Description.
+        original_body (cst.BaseSuite): Original body.
 
     Returns:
         str: Description.
@@ -55,8 +55,8 @@ class _DocstringInserter(cst.CSTTransformer):
         """     make docstring stmt.
 
     Args:
-        text (str): Description.
-        indent (str): Description.
+        text (str): Input text.
+        indent (str): Indent.
 
     Returns:
         cst.SimpleStatementLine: Description.
@@ -78,7 +78,7 @@ class _DocstringInserter(cst.CSTTransformer):
         """     has docstring.
 
     Args:
-        body (cst.BaseSuite): Description.
+        body (cst.BaseSuite): Body.
 
     Returns:
         bool: Description.
@@ -105,7 +105,7 @@ class _DocstringInserter(cst.CSTTransformer):
         """    Visit classdef.
 
     Args:
-        node (cst.ClassDef): Description.
+        node (cst.ClassDef): Node.
 
     Returns:
         Optional[bool]: Description.
@@ -119,8 +119,8 @@ class _DocstringInserter(cst.CSTTransformer):
         """    Leave classdef.
 
     Args:
-        original_node (cst.ClassDef): Description.
-        updated_node (cst.ClassDef): Description.
+        original_node (cst.ClassDef): Original node.
+        updated_node (cst.ClassDef): Updated node.
 
     Returns:
         cst.CSTNode: Description.
@@ -140,7 +140,7 @@ class _DocstringInserter(cst.CSTTransformer):
         """    Visit functiondef.
 
     Args:
-        node (cst.FunctionDef): Description.
+        node (cst.FunctionDef): Node.
 
     Returns:
         Optional[bool]: Description.
@@ -153,8 +153,8 @@ class _DocstringInserter(cst.CSTTransformer):
         """    Leave functiondef.
 
     Args:
-        original_node (cst.FunctionDef): Description.
-        updated_node (cst.FunctionDef): Description.
+        original_node (cst.FunctionDef): Original node.
+        updated_node (cst.FunctionDef): Updated node.
 
     Returns:
         cst.CSTNode: Description.
@@ -175,9 +175,9 @@ class _DocstringInserter(cst.CSTTransformer):
         """     insert docstring.
 
     Args:
-        body (cst.BaseSuite): Description.
-        docstring (str): Description.
-        indent (str): Description.
+        body (cst.BaseSuite): Body.
+        docstring (str): Docstring.
+        indent (str): Indent.
 
     Returns:
         cst.BaseSuite: Description.
@@ -212,8 +212,8 @@ class DocstringWriter:
         """    Apply.
 
     Args:
-        file_path (Path): Description.
-        records (list[MethodRecord]): Description.
+        file_path (Path): Path to the file.
+        records (list[MethodRecord]): Collection of records.
 
     Returns:
         FileResult: Description.
@@ -272,9 +272,9 @@ class DocstringWriter:
         """     print diff.
 
     Args:
-        file_path (Path): Description.
-        source (str): Description.
-        new_source (str): Description.
+        file_path (Path): Path to the file.
+        source (str): Source.
+        new_source (str): New source.
     """
         diff = difflib.unified_diff(
             source.splitlines(keepends=True),
@@ -290,8 +290,8 @@ class DocstringWriter:
         """     atomic write.
 
     Args:
-        file_path (Path): Description.
-        new_source (str): Description.
+        file_path (Path): Path to the file.
+        new_source (str): New source.
     """
         tmp_path = file_path.with_suffix(".py.tmp")
         try:

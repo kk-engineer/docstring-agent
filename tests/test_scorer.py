@@ -15,12 +15,12 @@ def _make_record(
     """     make record.
 
     Args:
-        existing_docstring (str | None): Description.
-        param_count (int): Description.
-        has_return_annotation (bool): Description.
-        has_raise_statements (bool): Description.
-        cyclomatic_complexity (int): Description.
-        qualified_name (str): Description.
+        existing_docstring (str | None): Existing docstring.
+        param_count (int): Param count.
+        has_return_annotation (bool): Whether return annotation.
+        has_raise_statements (bool): Whether raise statements.
+        cyclomatic_complexity (int): Cyclomatic complexity.
+        qualified_name (str): Qualified name.
 
     Returns:
         CoverageRecord: Description.

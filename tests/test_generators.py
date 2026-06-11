@@ -10,14 +10,16 @@ def _record(
     kind: str = "method",
     params: list | None = None,
     return_ann: str | None = None,
+    full_body: str | None = None,
 ) -> MethodRecord:
     """     record.
 
     Args:
-        name (str): Description.
-        kind (str): Description.
-        params (list | None): Description.
-        return_ann (str | None): Description.
+        name (str): Name of the entity.
+        kind (str): Kind.
+        params (list | None): Parameters used by the operation.
+        return_ann (str | None): Return ann.
+        full_body (str | None): Full body.
 
     Returns:
         MethodRecord: Description.
@@ -31,7 +33,7 @@ def _record(
         start_line=1,
         end_line=5,
         body_first_200="pass",
-        full_body="pass\n",
+        full_body=full_body or "pass\n",
         existing_docstring=None,
     )
 
@@ -168,3 +170,88 @@ class TestHeuristicGenerator:
         assert "Return user." in doc
         assert "Returns:" in doc
         assert "dict: Description." in doc
+
+    def test_semantic_summary_process_orders(self) -> None:
+        """Test semantic summary process orders."""
+        body = (
+            "def process_orders(orders):\n"
+            "    validated = validate_orders(orders)\n"
+            "    enriched = enrich_orders(validated)\n"
+            "    return save_orders(enriched)\n"
+        )
+        gen = HeuristicGenerator("google")
+        doc = gen.generate(_record(
+            "process_orders",
+            full_body=body,
+        ))
+        assert doc.startswith("Validate and enrich orders before saving.")
+
+    def test_semantic_summary_logger_only_fallback(self) -> None:
+        """Test semantic summary logger only fallback."""
+        body = (
+            "def do_something(data):\n"
+            "    logger.info('start')\n"
+            "    logger.debug('processing')\n"
+            "    logger.info('done')\n"
+        )
+        gen = HeuristicGenerator("google")
+        doc = gen.generate(_record(
+            "do_something",
+            full_body=body,
+        ))
+        assert doc.startswith("Do something.")
+
+    def test_semantic_summary_ast_failure_fallback(self) -> None:
+        """Test semantic summary ast failure fallback."""
+        body = "def broken(:\n"
+        gen = HeuristicGenerator("google")
+        doc = gen.generate(_record(
+            "do_something",
+            full_body=body,
+        ))
+        assert doc.startswith("Do something.")
+
+    def test_semantic_summary_verb_only_actions(self) -> None:
+        """Test semantic summary verb only actions."""
+        body = (
+            "def process():\n"
+            "    authenticate()\n"
+            "    authorize()\n"
+            "    execute()\n"
+            "    audit()\n"
+        )
+        gen = HeuristicGenerator("google")
+        doc = gen.generate(_record(
+            "process",
+            full_body=body,
+        ))
+        assert doc.startswith("Authenticate, authorize, execute, and audit.")
+
+    def test_semantic_summary_crud_workflow(self) -> None:
+        """Test semantic summary crud workflow."""
+        body = (
+            "def crud_workflow():\n"
+            "    fetch_user(uid)\n"
+            "    transform_user(data)\n"
+            "    save_user(data)\n"
+            "    publish_event(event)\n"
+        )
+        gen = HeuristicGenerator("google")
+        doc = gen.generate(_record(
+            "crud_workflow",
+            full_body=body,
+        ))
+        expected = (
+            "Fetch user information, transform user information, "
+            "save users, and publish events."
+        )
+        assert doc.startswith(expected)
+
+    def test_semantic_summary_empty_body_fallback(self) -> None:
+        """Test semantic summary empty body fallback."""
+        gen = HeuristicGenerator("google")
+        doc = gen.generate(_record(
+            "do_something",
+            full_body="",
+        ))
+        assert doc.startswith("Do something.")

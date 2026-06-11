@@ -17,13 +17,13 @@ def _make_record(
     """     make record.
 
     Args:
-        qualified_name (str): Description.
-        kind (str): Description.
-        params (list | None): Description.
-        return_annotation (str | None): Description.
-        existing_docstring (str | None): Description.
-        full_body (str): Description.
-        start_line (int): Description.
+        qualified_name (str): Qualified name.
+        kind (str): Kind.
+        params (list | None): Parameters used by the operation.
+        return_annotation (str | None): Return annotation.
+        existing_docstring (str | None): Existing docstring.
+        full_body (str): Full body.
+        start_line (int): Start line.
 
     Returns:
         MethodRecord: Description.

@@ -41,8 +41,8 @@ def _make_separator(char: str = "\u2500", width: int = 60) -> str:
     """     make separator.
 
     Args:
-        char (str): Description.
-        width (int): Description.
+        char (str): Char.
+        width (int): Width.
 
     Returns:
         str: Description.
@@ -96,7 +96,7 @@ class Logger:
         """    Return instance.
 
     Args:
-        config (Any): Description.
+        config (Any): Configuration values.
 
     Returns:
         "Logger": Description.
@@ -118,9 +118,9 @@ class Logger:
         """     log.
 
     Args:
-        level (int): Description.
-        message (str): Description.
-        style (Optional[str]): Description.
+        level (int): Level.
+        message (str): Message.
+        style (Optional[str]): Style.
     """
         if style:
             self._console.print(Text(message, style=style))
@@ -131,7 +131,7 @@ class Logger:
         """    Info.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._log(logging.INFO, message, style="info", **kwargs)
 
@@ -139,7 +139,7 @@ class Logger:
         """    Success.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._log(logging.INFO, f"  [success]\u2714[/success] {message}", **kwargs)
 
@@ -147,7 +147,7 @@ class Logger:
         """    Warning.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._log(logging.WARNING, f"  [warning]\u26a0[/warning] {message}", **kwargs)
 
@@ -155,7 +155,7 @@ class Logger:
         """    Error.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._log(logging.ERROR, f"  [error]\u2717[/error] {message}", **kwargs)
 
@@ -163,7 +163,7 @@ class Logger:
         """    Debug.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._log(logging.DEBUG, message, style="debug", **kwargs)
 
@@ -171,7 +171,7 @@ class Logger:
         """    Notice.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._console.print(Text(message, style="notice"))
 
@@ -179,7 +179,7 @@ class Logger:
         """    Input data.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._console.print(Text(message, style="input"))
 
@@ -187,7 +187,7 @@ class Logger:
         """    Output data.
 
     Args:
-        message (str): Description.
+        message (str): Message.
     """
         self._console.print(Text(message, style="output"))
 
@@ -195,8 +195,8 @@ class Logger:
         """    Metric.
 
     Args:
-        name (str): Description.
-        value (Any): Description.
+        name (str): Name of the entity.
+        value (Any): Value associated with the operation.
     """
         self._console.print(Text(f"  {name}: ", style="info") + Text(str(value), style="metric"))
 
@@ -204,7 +204,7 @@ class Logger:
         """    Step start.
 
     Args:
-        step_name (str): Description.
+        step_name (str): Step name.
     """
         line = _make_separator()
         self._console.print(Text(line, style="separator"))
@@ -215,8 +215,8 @@ class Logger:
         """    Step end.
 
     Args:
-        step_name (str): Description.
-        elapsed_seconds (float): Description.
+        step_name (str): Step name.
+        elapsed_seconds (float): Elapsed seconds.
     """
         self.metric(f"[{step_name}] time_taken_seconds", f"{elapsed_seconds:.3f}s")
 
@@ -228,8 +228,8 @@ class Logger:
         """    Print panel.
 
     Args:
-        title (str): Description.
-        content (str): Description.
+        title (str): Title.
+        content (str): Content to process.
     """
         from rich.panel import Panel
 
@@ -239,9 +239,9 @@ class Logger:
         """    Print table.
 
     Args:
-        title (str): Description.
-        columns (list[str]): Description.
-        rows (list[list[Any]]): Description.
+        title (str): Title.
+        columns (list[str]): Columns.
+        rows (list[list[Any]]): Rows.
     """
         table = Table(title=title, title_style="bold cyan", border_style="dim white")
         for col in columns:
@@ -255,9 +255,9 @@ class Logger:
         """    Progress bar.
 
     Args:
-        total (int): Description.
+        total (int): Total.
         description (str): Description.
-        transient (bool): Description.
+        transient (bool): Transient.
     """
         progress = Progress(
             SpinnerColumn(),
@@ -274,11 +274,7 @@ class Logger:
             yield progress, task
 
     def get_logger(self) -> logging.Logger:
-        """    Get logger.
-
-        Returns:
-            logging.Logger: Description.
-    """
+        """Get logger."""
         return self._logger
 
 
@@ -287,8 +283,8 @@ def timed_step(step_name: str, logger: Logger) -> Iterator[None]:
     """    Timed step.
 
     Args:
-        step_name (str): Description.
-        logger (Logger): Description.
+        step_name (str): Step name.
+        logger (Logger): Logger instance.
 
     Returns:
         Iterator[None]: Description.
