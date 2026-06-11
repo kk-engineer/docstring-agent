@@ -154,7 +154,14 @@ class _RecordCollector(cst.CSTVisitor):
         return name
 
     def visit_ClassDef(self, node: cst.ClassDef) -> Optional[bool]:  # noqa: N802
-        """Visit classdef."""
+        """    Visit classdef.
+
+    Args:
+        node (cst.ClassDef): Description.
+
+    Returns:
+        Optional[bool]: Description.
+    """
         name = node.name.value
         qualified = self._qualified(name)
         self._class_stack.append(name)
@@ -183,11 +190,22 @@ class _RecordCollector(cst.CSTVisitor):
         return True
 
     def leave_ClassDef(self, node: cst.ClassDef) -> None:  # noqa: N802
-        """Leave classdef."""
+        """    Leave classdef.
+
+    Args:
+        node (cst.ClassDef): Description.
+    """
         self._class_stack.pop()
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> Optional[bool]:  # noqa: N802
-        """Visit functiondef."""
+        """    Visit functiondef.
+
+    Args:
+        node (cst.FunctionDef): Description.
+
+    Returns:
+        Optional[bool]: Description.
+    """
         name = node.name.value
         qualified = self._qualified(name)
         in_class = bool(self._class_stack)
@@ -228,7 +246,11 @@ class _RecordCollector(cst.CSTVisitor):
         return False  # don't visit nested functions inside functions
 
     def visit_ClassDef_body(self, node: cst.ClassDef) -> None:  # noqa: N802
-        """Visit classdef body."""
+        """    Visit classdef body.
+
+    Args:
+        node (cst.ClassDef): Description.
+    """
         pass
 
 
@@ -240,7 +262,14 @@ class CSTParser:
         self.logger = Logger.get_instance()
 
     def parse_file(self, file_path: Path) -> list[MethodRecord]:
-        """Parse file and return the result."""
+        """    Parse file and return the result.
+
+    Args:
+        file_path (Path): Description.
+
+    Returns:
+        list[MethodRecord]: Description.
+    """
         filename = file_path.name
         with timed_step(f"CST Parsing: {filename}", self.logger):
             try:

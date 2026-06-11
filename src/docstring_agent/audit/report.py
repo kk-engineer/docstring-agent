@@ -26,6 +26,7 @@ from .models import (
 
 
 class ReportFormatter:
+    """Reportformatter."""
     def __init__(self, config: Config, logger: Logger) -> None:
         self.config = config
         self.logger = logger
@@ -36,8 +37,19 @@ class ReportFormatter:
         self,
         file_results: list[FileAuditResult],
         elapsed: float,
+        repo_path: Optional[Path] = None,
     ) -> AuditReport:
-        repo_path = Path(".").resolve()
+        """    Build.
+
+    Args:
+        file_results (list[FileAuditResult]): Description.
+        elapsed (float): Description.
+        repo_path (Optional[Path]): Description.
+
+    Returns:
+        AuditReport: Description.
+    """
+        repo_path = repo_path.resolve() if repo_path else Path(".").resolve()
         audit_cfg = getattr(self.config, "audit", None)
         quality_threshold = (
             audit_cfg.quality_threshold if audit_cfg else 0.65
@@ -110,6 +122,11 @@ class ReportFormatter:
         )
 
     def render_console(self, report: AuditReport) -> None:
+        """    Render console.
+
+    Args:
+        report (AuditReport): Description.
+    """
         self._render_header(report)
         self._render_coverage_table(report)
         if report.missing_methods:
@@ -312,7 +329,7 @@ class ReportFormatter:
         else:
             cov_text.append("FAIL", style="bold red")
         cov_text.append(
-            f"  ({report.overall_coverage_pct:.1%} >= {report.coverage_threshold:.1%})"
+            f"  ({report.overall_coverage_pct:.1%} <= {report.coverage_threshold:.1%})"
         )
         self._console.print(cov_text)
 
@@ -323,11 +340,19 @@ class ReportFormatter:
         else:
             qual_text.append("FAIL", style="bold red")
         qual_text.append(
-            f"  (mean {report.overall_mean_quality:.2f} >= {report.quality_threshold:.2f})"
+            f"  (mean {report.overall_mean_quality:.2f} <= {report.quality_threshold:.2f})"
         )
         self._console.print(qual_text)
 
     def render_json(self, report: AuditReport) -> str:
+        """    Render json.
+
+    Args:
+        report (AuditReport): Description.
+
+    Returns:
+        str: Description.
+    """
         def _dim_to_dict(d: ScoreDimension) -> dict[str, Any]:
             return {
                 "name": d.name,
@@ -452,6 +477,14 @@ class ReportFormatter:
         return json.dumps(data, indent=2)
 
     def render_markdown(self, report: AuditReport) -> str:
+        """    Render markdown.
+
+    Args:
+        report (AuditReport): Description.
+
+    Returns:
+        str: Description.
+    """
         lines: list[str] = []
         repo_name = report.repo_path.name
         ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")

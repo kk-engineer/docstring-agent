@@ -8,7 +8,7 @@ from pathlib import Path
 import click
 from rich.console import Console
 
-from .config import Config
+from .config import Config, RepairConfig
 from .logger import Logger
 from .pipeline import Pipeline
 
@@ -26,6 +26,7 @@ console = Console()
     message="%(prog)s version %(version)s",
 )
 def cli() -> None:
+    """Cli."""
     pass
 
 
@@ -127,6 +128,20 @@ def generate(
     no_llm: bool,
     show_summary: bool,
 ) -> None:
+    """    Generate.
+
+    Args:
+        repo_path (Path): Description.
+        config (Path): Description.
+        dry_run (bool | None): Description.
+        style (str | None): Description.
+        improve (bool | None): Description.
+        include (tuple[Path, ...]): Description.
+        exclude (tuple[Path, ...]): Description.
+        llm_only (bool): Description.
+        no_llm (bool): Description.
+        show_summary (bool): Description.
+    """
     hf_key = os.environ.get("hf_api_key", "")
     if hf_key:
         os.environ.setdefault("HF_TOKEN", hf_key)
@@ -286,6 +301,20 @@ def audit(
     sort_by: str | None,
     fail_under: float | None,
 ) -> None:
+    """    Audit.
+
+    Args:
+        repo_path (Path): Description.
+        config (Path): Description.
+        formats (tuple[str, ...]): Description.
+        output (Path | None): Description.
+        threshold (float | None): Description.
+        min_coverage (float | None): Description.
+        include_private (bool): Description.
+        include_dunders (bool): Description.
+        sort_by (str | None): Description.
+        fail_under (float | None): Description.
+    """
     config_target = Path(config)
     if not config_target.exists():
         console.print(
@@ -380,6 +409,159 @@ def audit(
         sys.exit(1)
 
 
+@cli.command(
+    "repair",
+    help="Repair low-quality docstrings in a Python repository. "
+    "REPO_PATH: Repository root to repair. Default: current directory.",
+    epilog="""
+
+Examples:
+
+  docstring-agent repair
+  Audit the current directory and repair flagged methods.
+
+  docstring-agent repair /path/to/project --report report.json
+  Load a pre-existing audit report and repair flagged methods.
+
+  docstring-agent repair --dry-run
+  Preview repairs without writing files.
+
+  docstring-agent repair --no-llm
+  Use heuristic patching only, skip LLM.
+
+  docstring-agent repair --token-budget 100000
+  Increase the LLM token budget for surgical repairs.
+""",
+)
+@click.argument(
+    "repo_path",
+    default=".",
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, path_type=Path),
+)
+@click.option(
+    "--config",
+    "-c",
+    default="config.toml",
+    type=click.Path(dir_okay=False, path_type=Path),
+    help="Path to TOML config file.",
+)
+@click.option(
+    "--report",
+    type=click.Path(dir_okay=False, path_type=Path),
+    default=None,
+    help="Path to audit report JSON to load instead of running audit inline.",
+)
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    default=False,
+    help="Print unified diff, do not write files.",
+)
+@click.option(
+    "--no-llm",
+    is_flag=True,
+    default=False,
+    help="Skip LLM entirely (heuristic patching only).",
+)
+@click.option(
+    "--token-budget",
+    type=int,
+    default=None,
+    help="Override LLM token budget for surgical repairs.",
+)
+@click.option(
+    "--no-backup",
+    is_flag=True,
+    default=False,
+    help="Do not create .bak backup files before writing.",
+)
+@click.option(
+    "--show-summary",
+    is_flag=True,
+    default=False,
+    help="Print RepairSummary table after run.",
+)
+def repair(
+    repo_path: Path,
+    config: Path,
+    report: Path | None,
+    dry_run: bool,
+    no_llm: bool,
+    token_budget: int | None,
+    no_backup: bool,
+    show_summary: bool,
+) -> None:
+    """    Repair.
+
+    Args:
+        repo_path (Path): Description.
+        config (Path): Description.
+        report (Path | None): Description.
+        dry_run (bool): Description.
+        no_llm (bool): Description.
+        token_budget (int | None): Description.
+        no_backup (bool): Description.
+        show_summary (bool): Description.
+    """
+    config_target = Path(config)
+    if not config_target.exists():
+        console.print(
+            f"CRITICAL: Configuration file '{config_target}' not found. "
+            "Program execution terminated."
+        )
+        sys.exit(1)
+
+    try:
+        cfg = Config.get_instance(config_target)
+        logger = Logger.get_instance(cfg)
+
+        if dry_run:
+            cfg.docstring_gen.dry_run = True
+
+        if cfg.repair is None:
+            cfg.repair = RepairConfig()
+
+        if token_budget is not None:
+            cfg.repair.token_budget = token_budget
+        if no_backup:
+            cfg.repair.backup_originals = False
+
+        logger.notice(f"Configuration parsed from {config_target}")
+
+        llm_client = None
+        if not no_llm:
+            from .llm import LLMClient
+
+            llm_client = LLMClient.get_instance(cfg)
+
+        from .repair.pipeline import RepairPipeline
+
+        pipeline = RepairPipeline(repo_path, cfg, llm=llm_client, dry_run=dry_run)
+        summary = asyncio.run(pipeline.run(report_path=report))
+
+        if show_summary:
+            _print_repair_summary(summary)
+
+        logger.info(
+            f"Repair complete: {summary.repaired} repaired, "
+            f"{summary.skipped} skipped, {summary.failed} failed"
+        )
+
+        if summary.score_delta_mean is not None:
+            logger.metric("mean_score_delta", f"{summary.score_delta_mean:+.3f}")
+        logger.metric("strategies", str(summary.strategy_breakdown))
+        logger.metric("elapsed_seconds", f"{summary.elapsed_seconds:.2f}")
+
+        if summary.methods_still_below:
+            logger.warning(
+                f"{summary.methods_still_below} methods still below quality threshold"
+            )
+
+    except Exception as err:
+        console.print(f"REPAIR ERROR: {err}")
+        sys.exit(1)
+
+
 def _print_file_table(pipeline) -> None:
     from .logger import Logger
     logger = Logger.get_instance()
@@ -419,6 +601,35 @@ def _print_summary(summary) -> None:
             ["Heuristic generated", str(summary.heuristic_count)],
             ["LLM generated", str(summary.llm_count)],
             ["LLM tokens used", str(summary.llm_tokens_used)],
+            ["Elapsed (s)", f"{summary.elapsed_seconds:.2f}"],
+        ],
+    )
+
+
+def _print_repair_summary(summary) -> None:
+    from .logger import Logger
+
+    logger = Logger.get_instance()
+
+    strategy_rows = [
+        [strategy, str(count)]
+        for strategy, count in sorted(summary.strategy_breakdown.items())
+    ]
+    logger.print_table(
+        "Repair Summary",
+        ["Metric", "Value"],
+        [
+            ["Total flagged", str(summary.total_flagged)],
+            ["Repaired", str(summary.repaired)],
+            ["Skipped", str(summary.skipped)],
+            ["Failed", str(summary.failed)],
+            ["Strategy breakdown", ", ".join(
+                f"{k}={v}" for k, v in sorted(summary.strategy_breakdown.items())
+            )],
+            ["Total tokens used", str(summary.total_tokens_used)],
+            ["Mean score delta",
+             f"{summary.score_delta_mean:+.3f}" if summary.score_delta_mean is not None else "N/A"],
+            ["Still below threshold", str(summary.methods_still_below)],
             ["Elapsed (s)", f"{summary.elapsed_seconds:.2f}"],
         ],
     )

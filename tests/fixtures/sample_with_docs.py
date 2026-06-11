@@ -10,11 +10,23 @@ class ConfigParser:
         self._data: dict[str, Any] = {}
 
     def get_config(self, key: str, default: Optional[Any] = None) -> Any:
-        """Return config."""
+        """    Return config.
+
+    Args:
+        key (str): Description.
+        default (Optional[Any]): Description.
+
+    Returns:
+        Any: Description.
+    """
         return self._data.get(key, default)
 
     def validate_path(self) -> bool:
-        """Validate path."""
+        """    Validate path.
+
+    Returns:
+        bool: Description.
+    """
         if not self.path.exists():
             return False
         if not self.path.is_file():
@@ -22,7 +34,14 @@ class ConfigParser:
         return True
 
     def parse_with_fallback(self, fallback: dict[str, Any]) -> dict[str, Any]:
-        """Parse with fallback and return the result."""
+        """    Parse with fallback and return the result.
+
+    Args:
+        fallback (dict[str, Any]): Description.
+
+    Returns:
+        dict[str, Any]: Description.
+    """
         result: dict[str, Any] = {}
         for k, v in fallback.items():
             if k in self._data:
@@ -38,11 +57,19 @@ class ConfigParser:
 
     @staticmethod
     def default_config() -> dict[str, Any]:
-        """Default config."""
+        """    Default config.
+
+    Returns:
+        dict[str, Any]: Description.
+    """
         return {"version": 1, "debug": False}
 
     def complex_parse(self) -> dict[str, Any]:
-        """Complex parse."""
+        """    Complex parse.
+
+    Returns:
+        dict[str, Any]: Description.
+    """
         result: dict[str, Any] = {}
         for key, value in self._data.items():
             if isinstance(value, dict) and "type" in value:

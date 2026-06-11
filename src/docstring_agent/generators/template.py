@@ -10,7 +10,14 @@ class TemplateGenerator:
         self.style = style
 
     def generate(self, record: MethodRecord) -> str:
-        """Generate."""
+        """    Generate.
+
+    Args:
+        record (MethodRecord): Description.
+
+    Returns:
+        str: Description.
+    """
         name = record.qualified_name.split(".")[-1]
         return self._summary(name, record)
 

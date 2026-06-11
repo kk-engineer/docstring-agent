@@ -128,7 +128,11 @@ def test_route_llm_high_complexity() -> None:
 
 @patch("docstring_agent.enricher.cc_visit")
 def test_complexity_computation(mock_cc_visit) -> None:
-    """Test complexity computation."""
+    """    Test complexity computation.
+
+    Args:
+        mock_cc_visit (Any): Description.
+    """
     from collections import namedtuple
     FakeBlock = namedtuple("FakeBlock", ["complexity"])
     mock_cc_visit.return_value = [FakeBlock(complexity=7)]

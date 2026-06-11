@@ -34,7 +34,11 @@ def _make_record(name: str, docstring: str, kind: str = "method", start: int = 1
 
 
 def test_writer_dry_run(tmp_path: Path) -> None:
-    """Test writer dry run."""
+    """    Test writer dry run.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     src = tmp_path / "test.py"
     src.write_text("def foo():\n    pass\n")
     writer = DocstringWriter(dry_run=True, style="google")
@@ -46,7 +50,11 @@ def test_writer_dry_run(tmp_path: Path) -> None:
 
 
 def test_writer_insert_docstring(tmp_path: Path) -> None:
-    """Test writer insert docstring."""
+    """    Test writer insert docstring.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     src = tmp_path / "test.py"
     src.write_text("def foo():\n    pass\n")
     writer = DocstringWriter(dry_run=False, style="google")
@@ -59,7 +67,11 @@ def test_writer_insert_docstring(tmp_path: Path) -> None:
 
 
 def test_writer_replace_docstring(tmp_path: Path) -> None:
-    """Test writer replace docstring."""
+    """    Test writer replace docstring.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     src = tmp_path / "test.py"
     src.write_text('def foo():\n    """Old doc."""\n    pass\n')
     writer = DocstringWriter(dry_run=False, style="google")
@@ -74,7 +86,11 @@ def test_writer_replace_docstring(tmp_path: Path) -> None:
 
 
 def test_writer_no_records_no_changes(tmp_path: Path) -> None:
-    """Test writer no records no changes."""
+    """    Test writer no records no changes.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     src = tmp_path / "test.py"
     src.write_text("def foo():\n    pass\n")
     writer = DocstringWriter(dry_run=False, style="google")
@@ -85,7 +101,11 @@ def test_writer_no_records_no_changes(tmp_path: Path) -> None:
 
 
 def test_writer_multiline_docstring(tmp_path: Path) -> None:
-    """Test writer multiline docstring."""
+    """    Test writer multiline docstring.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     src = tmp_path / "test.py"
     src.write_text("def foo():\n    pass\n")
     writer = DocstringWriter(dry_run=False, style="google")
@@ -100,7 +120,11 @@ def test_writer_multiline_docstring(tmp_path: Path) -> None:
 
 
 def test_writer_preserves_rest_of_file(tmp_path: Path) -> None:
-    """Test writer preserves rest of file."""
+    """    Test writer preserves rest of file.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     src = tmp_path / "test.py"
     src.write_text("import os\n\n\ndef foo():\n    pass\n\n\ndef bar():\n    return 1\n")
     writer = DocstringWriter(dry_run=False, style="google")

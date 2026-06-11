@@ -2,7 +2,14 @@ from typing import Any
 
 
 def deeply_nested(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Deeply nested."""
+    """    Deeply nested.
+
+    Args:
+        items (list[dict[str, Any]]): Description.
+
+    Returns:
+        list[dict[str, Any]]: Description.
+    """
     result: list[dict[str, Any]] = []
     for item in items:
         if "type" in item:

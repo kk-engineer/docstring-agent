@@ -41,3 +41,7 @@ sort_by = "score"
 default_formats = ["console"]
 json_report_path = "docstring_report.json"
 markdown_report_path = ""
+
+[repair]
+token_budget = 50000
+backup_originals = true

@@ -16,7 +16,14 @@ class Enricher:
         self.logger = Logger.get_instance()
 
     def enrich(self, records: list[MethodRecord]) -> list[MethodRecord]:
-        """Enrich."""
+        """    Enrich.
+
+    Args:
+        records (list[MethodRecord]): Description.
+
+    Returns:
+        list[MethodRecord]: Description.
+    """
         for record in records:
             self._compute_complexity(record)
             record.route = self._route(record)

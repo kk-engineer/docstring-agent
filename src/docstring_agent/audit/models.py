@@ -7,6 +7,7 @@ from typing import Optional
 
 
 class CoverageStatus(str, Enum):
+    """Coveragestatus."""
     PRESENT = "present"
     MISSING = "missing"
     PARTIAL = "partial"
@@ -14,6 +15,7 @@ class CoverageStatus(str, Enum):
 
 @dataclass
 class ScoreDimension:
+    """Scoredimension."""
     name: str
     score: float
     weight: float
@@ -22,6 +24,7 @@ class ScoreDimension:
 
 @dataclass
 class QualityScore:
+    """Qualityscore."""
     composite: float
     dimensions: list[ScoreDimension]
     below_threshold: bool
@@ -30,6 +33,7 @@ class QualityScore:
 
 @dataclass
 class CoverageRecord:
+    """Coveragerecord."""
     file_path: Path
     qualified_name: str
     kind: str
@@ -48,38 +52,70 @@ class CoverageRecord:
 
 @dataclass
 class FileAuditResult:
+    """Fileauditresult."""
     file_path: Path
     records: list[CoverageRecord] = field(default_factory=list)
     parse_error: Optional[str] = None
 
     @property
     def total(self) -> int:
+        """    Total.
+
+    Returns:
+        int: Description.
+    """
         return len(self.records)
 
     @property
     def coverage_count(self) -> int:
+        """    Coverage count.
+
+    Returns:
+        int: Description.
+    """
         return sum(1 for r in self.records if r.status == CoverageStatus.PRESENT)
 
     @property
     def missing_count(self) -> int:
+        """    Missing count.
+
+    Returns:
+        int: Description.
+    """
         return sum(1 for r in self.records if r.status == CoverageStatus.MISSING)
 
     @property
     def partial_count(self) -> int:
+        """    Partial count.
+
+    Returns:
+        int: Description.
+    """
         return sum(1 for r in self.records if r.status == CoverageStatus.PARTIAL)
 
     @property
     def coverage_pct(self) -> float:
+        """    Coverage pct.
+
+    Returns:
+        float: Description.
+    """
         return self.coverage_count / self.total if self.total else 1.0
 
     @property
     def mean_quality(self) -> Optional[float]:
+        """    Mean quality.
+
+    Returns:
+        Optional[float]: Description.
+    """
         scored = [r.quality.composite for r in self.records if r.quality]
         return sum(scored) / len(scored) if scored else None
 
 
 @dataclass
 class AuditReport:
+    """Auditreport."""
     repo_path: Path
     file_results: list[FileAuditResult]
     quality_threshold: float

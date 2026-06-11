@@ -21,7 +21,14 @@ class LLMGenerator:
         self._fallback_gen = HeuristicGenerator(style)
 
     async def generate_batch(self, records: list[MethodRecord]) -> list[MethodRecord]:
-        """Generate batch."""
+        """    Generate batch.
+
+    Args:
+        records (list[MethodRecord]): Description.
+
+    Returns:
+        list[MethodRecord]: Description.
+    """
         n_batches = (len(records) + self.batch_size - 1) // self.batch_size
         for i in range(n_batches):
             start = i * self.batch_size
@@ -99,5 +106,12 @@ class LLMGenerator:
             r.generated_docstring = self._fallback_gen.generate(r)
 
     def generate_sync(self, records: list[MethodRecord]) -> list[MethodRecord]:
-        """Generate sync."""
+        """    Generate sync.
+
+    Args:
+        records (list[MethodRecord]): Description.
+
+    Returns:
+        list[MethodRecord]: Description.
+    """
         return asyncio.run(self.generate_batch(records))

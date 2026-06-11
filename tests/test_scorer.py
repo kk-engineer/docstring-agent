@@ -28,7 +28,9 @@ def _make_record(
 
 
 class TestScoreSummary:
+    """Testscoresummary."""
     def test_trivial_one_liner_low_score(self) -> None:
+        """Test trivial one liner low score."""
         scorer = QualityScorer(0.65)
         record = _make_record(existing_docstring="Hi.")
         dim = scorer._score_summary("Hi.", record)
@@ -36,6 +38,7 @@ class TestScoreSummary:
         assert "Too short" in dim.reason
 
     def test_complete_sentence_full_score(self) -> None:
+        """Test complete sentence full score."""
         scorer = QualityScorer(0.65)
         record = _make_record(existing_docstring="Parse the configuration file.")
         dim = scorer._score_summary("Parse the configuration file.", record)
@@ -43,6 +46,7 @@ class TestScoreSummary:
         assert "Good summary" in dim.reason
 
     def test_no_summary_zero_score(self) -> None:
+        """Test no summary zero score."""
         scorer = QualityScorer(0.65)
         record = _make_record(existing_docstring="")
         dim = scorer._score_summary("", record)
@@ -50,6 +54,7 @@ class TestScoreSummary:
         assert "No summary" in dim.reason
 
     def test_placeholder_todo_zero_score(self) -> None:
+        """Test placeholder todo zero score."""
         scorer = QualityScorer(0.65)
         record = _make_record(existing_docstring="TODO implement this")
         dim = scorer._score_summary("TODO implement this", record)
@@ -58,7 +63,9 @@ class TestScoreSummary:
 
 
 class TestScoreArgsCoverage:
+    """Testscoreargscoverage."""
     def test_no_params_full_score(self) -> None:
+        """Test no params full score."""
         scorer = QualityScorer(0.65)
         record = _make_record(existing_docstring="Do stuff.", param_count=0)
         dim = scorer._score_args_coverage("Do stuff.", record)
@@ -66,6 +73,7 @@ class TestScoreArgsCoverage:
         assert "N/A" in dim.reason
 
     def test_two_params_none_documented_zero_score(self) -> None:
+        """Test two params none documented zero score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff.
 
@@ -78,6 +86,7 @@ class TestScoreArgsCoverage:
         assert "no Args section" in dim.reason
 
     def test_two_params_both_documented_full_score(self) -> None:
+        """Test two params both documented full score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff.
 
@@ -94,6 +103,7 @@ class TestScoreArgsCoverage:
         assert "2/2" in dim.reason
 
     def test_two_params_one_documented_partial_score(self) -> None:
+        """Test two params one documented partial score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff.
 
@@ -107,7 +117,9 @@ class TestScoreArgsCoverage:
 
 
 class TestScoreReturns:
+    """Testscorereturns."""
     def test_no_return_annotation_full_score(self) -> None:
+        """Test no return annotation full score."""
         scorer = QualityScorer(0.65)
         record = _make_record(existing_docstring="Do stuff.", has_return_annotation=False)
         dim = scorer._score_returns("Do stuff.", record)
@@ -115,6 +127,7 @@ class TestScoreReturns:
         assert "N/A" in dim.reason
 
     def test_return_annotation_missing_section_zero_score(self) -> None:
+        """Test return annotation missing section zero score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff."""
         record = _make_record(existing_docstring=doc, has_return_annotation=True)
@@ -123,6 +136,7 @@ class TestScoreReturns:
         assert "Missing Returns" in dim.reason
 
     def test_return_annotation_with_section_full_score(self) -> None:
+        """Test return annotation with section full score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff.
 
@@ -136,7 +150,9 @@ class TestScoreReturns:
 
 
 class TestScoreSpecificity:
+    """Testscorespecificity."""
     def test_placeholder_deduction(self) -> None:
+        """Test placeholder deduction."""
         scorer = QualityScorer(0.65)
         record = _make_record(
             existing_docstring="This method does stuff.",
@@ -146,6 +162,7 @@ class TestScoreSpecificity:
         assert dim.score < 1.0
 
     def test_adequate_length_full_score(self) -> None:
+        """Test adequate length full score."""
         scorer = QualityScorer(0.65)
         long_doc = "Parse the configuration file and return a dictionary of settings."
         record = _make_record(
@@ -157,7 +174,9 @@ class TestScoreSpecificity:
 
 
 class TestScoreRaises:
+    """Testscoreraises."""
     def test_no_raises_full_score(self) -> None:
+        """Test no raises full score."""
         scorer = QualityScorer(0.65)
         record = _make_record(existing_docstring="Do stuff.", has_raise_statements=False)
         dim = scorer._score_raises("Do stuff.", record)
@@ -165,6 +184,7 @@ class TestScoreRaises:
         assert "No raises" in dim.reason
 
     def test_raises_missing_section_zero_score(self) -> None:
+        """Test raises missing section zero score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff."""
         record = _make_record(existing_docstring=doc, has_raise_statements=True)
@@ -173,6 +193,7 @@ class TestScoreRaises:
         assert "Missing Raises" in dim.reason
 
     def test_raises_with_section_full_score(self) -> None:
+        """Test raises with section full score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff.
 
@@ -186,11 +207,14 @@ class TestScoreRaises:
 
 
 class TestComposite:
+    """Testcomposite."""
     def test_weights_sum_to_one(self) -> None:
+        """Test weights sum to one."""
         total = sum(QualityScorer.WEIGHTS.values())
         assert abs(total - 1.0) < 0.001
 
     def test_perfect_docstring_scores_high(self) -> None:
+        """Test perfect docstring scores high."""
         scorer = QualityScorer(0.65)
         doc = """Parse the configuration file.
 
@@ -210,6 +234,7 @@ class TestComposite:
         assert qs.composite > 0.8
 
     def test_missing_returns_drags_score(self) -> None:
+        """Test missing returns drags score."""
         scorer = QualityScorer(0.65)
         doc = """Do stuff."""
         record = _make_record(
@@ -221,6 +246,7 @@ class TestComposite:
         assert qs.composite < 0.85
 
     def test_composite_manual_calculation(self) -> None:
+        """Test composite manual calculation."""
         scorer = QualityScorer(0.65)
         doc = "Do stuff."
         record = _make_record(

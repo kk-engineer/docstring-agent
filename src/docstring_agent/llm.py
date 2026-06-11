@@ -36,7 +36,14 @@ class LLMClient:
 
     @classmethod
     def get_instance(cls, config=None) -> "LLMClient":
-        """Return instance."""
+        """    Return instance.
+
+    Args:
+        config (Any): Description.
+
+    Returns:
+        "LLMClient": Description.
+    """
         if cls._instance is None:
             if config is None:
                 raise RuntimeError(
@@ -89,7 +96,15 @@ class LLMClient:
         return response.choices[0].message.content or ""
 
     async def complete(self, prompt: str, system: Optional[str] = None) -> str:
-        """Complete."""
+        """    Complete.
+
+    Args:
+        prompt (str): Description.
+        system (Optional[str]): Description.
+
+    Returns:
+        str: Description.
+    """
         last_exception: Optional[Exception] = None
         from .logger import Logger
         logger = Logger.get_instance()
@@ -121,7 +136,16 @@ class LLMClient:
         self, prompt: str, output_schema: Dict[str, Any],
         system: Optional[str] = None,
     ) -> Dict[str, Any]:
-        """Complete structured."""
+        """    Complete structured.
+
+    Args:
+        prompt (str): Description.
+        output_schema (Dict[str, Any]): Description.
+        system (Optional[str]): Description.
+
+    Returns:
+        Dict[str, Any]: Description.
+    """
         import json
 
         schema_desc = "\n".join(f"  {k}: {v}" for k, v in output_schema.items())  # noqa: E501

@@ -6,7 +6,11 @@ from docstring_agent.walker import FileWalker
 
 
 def test_walker_skip_dirs(tmp_path: Path) -> None:
-    """Test walker skip dirs."""
+    """    Test walker skip dirs.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     (tmp_path / "src").mkdir()
     (tmp_path / "src" / "main.py").write_text("x = 1\n")
     (tmp_path / ".git").mkdir()
@@ -23,7 +27,11 @@ def test_walker_skip_dirs(tmp_path: Path) -> None:
 
 
 def test_walker_only_py(tmp_path: Path) -> None:
-    """Test walker only py."""
+    """    Test walker only py.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     (tmp_path / "a.py").write_text("")
     (tmp_path / "b.js").write_text("")
     (tmp_path / "c.py").write_text("")
@@ -35,7 +43,11 @@ def test_walker_only_py(tmp_path: Path) -> None:
 
 
 def test_walker_size_limit(tmp_path: Path) -> None:
-    """Test walker size limit."""
+    """    Test walker size limit.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     (tmp_path / "small.py").write_text("x = 1\n")
     large = tmp_path / "large.py"
     large.write_text("x = 1\n" * 100000)
@@ -50,7 +62,11 @@ def test_walker_size_limit(tmp_path: Path) -> None:
 
 
 def test_walker_no_files(tmp_path: Path) -> None:
-    """Test walker no files."""
+    """    Test walker no files.
+
+    Args:
+        tmp_path (Path): Description.
+    """
     walker = FileWalker(tmp_path, [])
     files = walker.collect()
     assert files == []

@@ -73,14 +73,29 @@ class _DocstringInserter(cst.CSTTransformer):
         return False
 
     def visit_ClassDef(self, node: cst.ClassDef) -> Optional[bool]:  # noqa: N802
-        """Visit classdef."""
+        """    Visit classdef.
+
+    Args:
+        node (cst.ClassDef): Description.
+
+    Returns:
+        Optional[bool]: Description.
+    """
         self._class_stack.append(node.name.value)
         return True
 
     def leave_ClassDef(  # type: ignore[override]  # noqa: N802
         self, original_node: cst.ClassDef, updated_node: cst.ClassDef
     ) -> cst.CSTNode:
-        """Leave classdef."""
+        """    Leave classdef.
+
+    Args:
+        original_node (cst.ClassDef): Description.
+        updated_node (cst.ClassDef): Description.
+
+    Returns:
+        cst.CSTNode: Description.
+    """
         self._class_stack.pop()
         qname = self._qualified(original_node.name.value)
         record = self.records_by_qname.get(qname)
@@ -93,13 +108,28 @@ class _DocstringInserter(cst.CSTTransformer):
         )
 
     def visit_FunctionDef(self, node: cst.FunctionDef) -> Optional[bool]:  # noqa: N802
-        """Visit functiondef."""
+        """    Visit functiondef.
+
+    Args:
+        node (cst.FunctionDef): Description.
+
+    Returns:
+        Optional[bool]: Description.
+    """
         return True
 
     def leave_FunctionDef(  # type: ignore[override]  # noqa: N802
         self, original_node: cst.FunctionDef, updated_node: cst.FunctionDef
     ) -> cst.CSTNode:
-        """Leave functiondef."""
+        """    Leave functiondef.
+
+    Args:
+        original_node (cst.FunctionDef): Description.
+        updated_node (cst.FunctionDef): Description.
+
+    Returns:
+        cst.CSTNode: Description.
+    """
         qname = self._qualified(original_node.name.value)
         record = self.records_by_qname.get(qname)
         if record is None or record.generated_docstring is None:
@@ -141,7 +171,15 @@ class DocstringWriter:
         self.logger = Logger.get_instance()
 
     def apply(self, file_path: Path, records: list[MethodRecord]) -> FileResult:
-        """Apply."""
+        """    Apply.
+
+    Args:
+        file_path (Path): Description.
+        records (list[MethodRecord]): Description.
+
+    Returns:
+        FileResult: Description.
+    """
         filename = file_path.name
         with timed_step(f"Writing: {filename}", self.logger):
             result = FileResult(file_path=file_path, records=records)

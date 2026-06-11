@@ -20,7 +20,14 @@ class DocstringCache:
                 self._data = {}
 
     def is_fresh(self, file_path: Path) -> bool:
-        """Return True if fresh."""
+        """    Return True if fresh.
+
+    Args:
+        file_path (Path): Description.
+
+    Returns:
+        bool: Description.
+    """
         try:
             mtime = file_path.stat().st_mtime
         except OSError:
@@ -31,7 +38,11 @@ class DocstringCache:
         return abs(mtime - cached_mtime) < 0.01
 
     def mark_processed(self, file_path: Path) -> None:
-        """Mark processed."""
+        """    Mark processed.
+
+    Args:
+        file_path (Path): Description.
+    """
         try:
             mtime = file_path.stat().st_mtime
             self._data[str(file_path)] = mtime

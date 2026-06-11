@@ -32,6 +32,7 @@ def _get_config() -> Config:
 
 
 def test_pipeline_runs_and_produces_report() -> None:
+    """Test pipeline runs and produces report."""
     cfg = _get_config()
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())
@@ -43,6 +44,7 @@ def test_pipeline_runs_and_produces_report() -> None:
 
 
 def test_report_aggregates_are_consistent() -> None:
+    """Test report aggregates are consistent."""
     cfg = _get_config()
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())
@@ -53,6 +55,7 @@ def test_report_aggregates_are_consistent() -> None:
 
 
 def test_json_output_is_valid() -> None:
+    """Test json output is valid."""
     cfg = _get_config()
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())
@@ -74,6 +77,7 @@ def test_json_output_is_valid() -> None:
 
 
 def test_markdown_output_contains_header() -> None:
+    """Test markdown output contains header."""
     cfg = _get_config()
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())
@@ -91,6 +95,7 @@ def test_markdown_output_contains_header() -> None:
 
 
 def test_coverage_gate_fails_when_below_threshold() -> None:
+    """Test coverage gate fails when below threshold."""
     cfg = _get_config()
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())
@@ -101,6 +106,7 @@ def test_coverage_gate_fails_when_below_threshold() -> None:
 
 
 def test_coverage_uses_filtered_denominator() -> None:
+    """Test coverage uses filtered denominator."""
     cfg = _get_config()
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())

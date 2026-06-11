@@ -8,6 +8,7 @@ from .models import CoverageRecord, CoverageStatus, QualityScore, ScoreDimension
 
 
 class QualityScorer:
+    """Qualityscorer."""
 
     WEIGHTS = {
         "summary": 0.25,
@@ -33,6 +34,14 @@ class QualityScorer:
         self.logger = Logger.get_instance()
 
     def score(self, record: CoverageRecord) -> QualityScore:
+        """    Score.
+
+    Args:
+        record (CoverageRecord): Description.
+
+    Returns:
+        QualityScore: Description.
+    """
         doc = record.existing_docstring or ""
         dims: list[ScoreDimension] = [
             self._score_summary(doc, record),
@@ -52,6 +61,14 @@ class QualityScorer:
     def score_batch(
         self, records: list[CoverageRecord]
     ) -> list[CoverageRecord]:
+        """    Score batch.
+
+    Args:
+        records (list[CoverageRecord]): Description.
+
+    Returns:
+        list[CoverageRecord]: Description.
+    """
         with timed_step("Quality Scoring", self.logger):
             scorable = [r for r in records if r.status in (
                 CoverageStatus.PRESENT, CoverageStatus.PARTIAL

@@ -11,12 +11,21 @@ from .models import CoverageRecord, CoverageStatus
 
 
 class CoverageAuditor:
+    """Coverageauditor."""
     def __init__(self, include_private: bool, include_dunders: bool) -> None:
         self.include_private = include_private
         self.include_dunders = include_dunders
         self.logger = Logger.get_instance()
 
     def audit(self, records: list[MethodRecord]) -> list[CoverageRecord]:
+        """    Audit.
+
+    Args:
+        records (list[MethodRecord]): Description.
+
+    Returns:
+        list[CoverageRecord]: Description.
+    """
         total_before = len(records)
         with timed_step("Coverage Audit", self.logger):
             filtered = self._apply_filters(records)

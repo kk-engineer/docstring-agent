@@ -69,6 +69,7 @@ class DocstringGenConfig:
 
 @dataclass
 class AuditConfig:
+    """Auditconfig."""
     quality_threshold: float = 0.65
     min_coverage: float = 1.0
     include_private: bool = False
@@ -78,6 +79,13 @@ class AuditConfig:
     json_report_path: str = "docstring_report.json"
     markdown_report_path: str = ""
     fail_under: Optional[float] = None
+
+
+@dataclass
+class RepairConfig:
+    """Repairconfig."""
+    token_budget: int = 50000
+    backup_originals: bool = True
 
 
 CRITICAL_KEYS: set[str] = {
@@ -99,16 +107,25 @@ class Config:
         llm: LLMConfig,
         docstring_gen: DocstringGenConfig,
         audit: Optional[AuditConfig] = None,
+        repair: Optional[RepairConfig] = None,
     ) -> None:
         """Initialise Config."""
         self.app = app
         self.llm = llm
         self.docstring_gen = docstring_gen
         self.audit = audit
+        self.repair = repair
 
     @classmethod
     def get_instance(cls, config_path: Optional[str | Path] = None) -> "Config":
-        """Return instance."""
+        """    Return instance.
+
+    Args:
+        config_path (Optional[str | Path]): Description.
+
+    Returns:
+        "Config": Description.
+    """
         global _config_instance
         if _config_instance is None:
             load_dotenv()
@@ -149,6 +166,7 @@ class Config:
         llm_data = raw.get("llm", {})
         docstring_data = raw.get("docstring_gen", {})
         audit_data = raw.get("audit", {})
+        repair_data = raw.get("repair", {})
 
         app = AppConfig(
             name=app_data.get("name", "docstring-agent"),
@@ -193,7 +211,13 @@ class Config:
             fail_under=audit_data.get("fail_under", audit_defaults.fail_under),
         )
 
-        return cls(app=app, llm=llm, docstring_gen=docstring_gen, audit=audit)
+        repair_defaults = RepairConfig()
+        repair = RepairConfig(
+            token_budget=repair_data.get("token_budget", repair_defaults.token_budget),
+            backup_originals=repair_data.get("backup_originals", repair_defaults.backup_originals),
+        )
+
+        return cls(app=app, llm=llm, docstring_gen=docstring_gen, audit=audit, repair=repair)
 
     def _section_table(self, title: str, items: list[tuple[str, str]]) -> Panel:
         """ section table."""
@@ -250,7 +274,14 @@ class Config:
         _console.print()
 
     def to_dict(self, mask_secrets: bool = False) -> dict[str, Any]:
-        """To dict."""
+        """    To dict.
+
+    Args:
+        mask_secrets (bool): Description.
+
+    Returns:
+        dict[str, Any]: Description.
+    """
         return {
             "app": {
                 "name": self.app.name,
@@ -289,5 +320,9 @@ class Config:
                 "json_report_path": self.audit.json_report_path if self.audit else "",
                 "markdown_report_path": self.audit.markdown_report_path if self.audit else "",
                 "fail_under": self.audit.fail_under if self.audit else None,
+            },
+            "repair": {
+                "token_budget": self.repair.token_budget if self.repair else 50000,
+                "backup_originals": self.repair.backup_originals if self.repair else True,
             },
         }

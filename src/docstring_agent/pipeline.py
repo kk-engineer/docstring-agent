@@ -42,7 +42,11 @@ class Pipeline:
         self.start_time: float = 0.0
 
     def set_llm_client(self, llm_client: LLMClient) -> None:
-        """Set llm client."""
+        """    Set llm client.
+
+    Args:
+        llm_client (LLMClient): Description.
+    """
         self.llm_client = llm_client
         self.llm_gen = LLMGenerator(
             llm_client,
@@ -51,7 +55,11 @@ class Pipeline:
         )
 
     async def run(self) -> PipelineSummary:
-        """Run."""
+        """    Run.
+
+    Returns:
+        PipelineSummary: Description.
+    """
         self.start_time = time.perf_counter()
         await self.step_discover()
         await self.step_parse()

@@ -13,7 +13,11 @@ class FileWalker:
         self.logger = Logger.get_instance()
 
     def collect(self) -> list[Path]:
-        """Collect."""
+        """    Collect.
+
+    Returns:
+        list[Path]: Description.
+    """
         with timed_step("File Discovery", self.logger):
             files: list[Path] = []
             total_kb = 0.0

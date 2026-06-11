@@ -29,18 +29,21 @@ def _make_record(
 
 
 def test_missing_docstring() -> None:
+    """Test missing docstring."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     record = _make_record(existing_docstring=None)
     assert auditor._classify(record) == CoverageStatus.MISSING
 
 
 def test_empty_docstring_is_missing() -> None:
+    """Test empty docstring is missing."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     record = _make_record(existing_docstring="   ")
     assert auditor._classify(record) == CoverageStatus.MISSING
 
 
 def test_present_no_params() -> None:
+    """Test present no params."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     record = _make_record(
         existing_docstring="Do something useful.",
@@ -50,6 +53,7 @@ def test_present_no_params() -> None:
 
 
 def test_partial_no_args_section() -> None:
+    """Test partial no args section."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     record = _make_record(
         existing_docstring="Do something with parameters.",
@@ -59,6 +63,7 @@ def test_partial_no_args_section() -> None:
 
 
 def test_partial_no_returns_section() -> None:
+    """Test partial no returns section."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     record = _make_record(
         existing_docstring="Do something and return a value.",
@@ -69,6 +74,7 @@ def test_partial_no_returns_section() -> None:
 
 
 def test_partial_no_raises_section() -> None:
+    """Test partial no raises section."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     record = _make_record(
         existing_docstring="Do something that may raise.",
@@ -79,6 +85,7 @@ def test_partial_no_raises_section() -> None:
 
 
 def test_complete_google_style_docstring() -> None:
+    """Test complete google style docstring."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     doc = """Do something useful.
 
@@ -102,6 +109,7 @@ def test_complete_google_style_docstring() -> None:
 
 
 def test_private_method_filtered() -> None:
+    """Test private method filtered."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     records = [
         _make_record(qualified_name="do_thing"),
@@ -114,6 +122,7 @@ def test_private_method_filtered() -> None:
 
 
 def test_dunder_method_filtered() -> None:
+    """Test dunder method filtered."""
     auditor = CoverageAuditor(include_private=False, include_dunders=False)
     records = [
         _make_record(qualified_name="do_thing"),
@@ -126,6 +135,7 @@ def test_dunder_method_filtered() -> None:
 
 
 def test_has_raise_statements() -> None:
+    """Test has raise statements."""
     auditor = CoverageAuditor(include_private=True, include_dunders=True)
     record = _make_record(
         full_body="if x < 0:\n    raise ValueError('bad')\nreturn x"
@@ -134,6 +144,7 @@ def test_has_raise_statements() -> None:
 
 
 def test_no_raise_statements() -> None:
+    """Test no raise statements."""
     auditor = CoverageAuditor(include_private=True, include_dunders=True)
     record = _make_record(full_body="return x + 1")
     assert auditor._has_raise_statements(record.full_body) is False

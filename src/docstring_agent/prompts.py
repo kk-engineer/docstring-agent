@@ -33,3 +33,39 @@ Return ONLY valid JSON — no markdown fences, no text outside the array.
   }}
 ]
 """ + JSON_SAFETY_RULES
+
+DOCSTRING_REPAIR_PROMPT = """\
+You are a technical writer performing targeted docstring repairs on Python code.
+You will receive a list of methods, each with:
+  - An existing docstring that has specific quality problems
+  - Explicit instructions describing exactly what to fix
+  - Explicit guards describing what to preserve unchanged
+
+Your task: apply only the listed instructions. Do not rewrite sections that
+are guarded. Do not add content not requested. Do not change the style of
+sections that are passing.
+
+Style convention: {style}
+
+Methods to repair:
+{methods_json}
+
+Output ONLY a JSON array. No markdown fences. No explanation outside the array.
+Each element must have exactly two keys: "qualified_name" and "docstring".
+The "docstring" value is the complete repaired docstring as a single string.
+Use \\n for line breaks. Do not include the triple quotes in the value.
+Qualified names in output must exactly match input qualified names.
+
+Repair rules:
+1. Apply each instruction in full. Do not partially apply an instruction.
+2. For each guard: the guarded content must appear in your output unchanged.
+   If a guard says "preserve the Returns section exactly", your output must
+   contain that section with identical wording.
+3. Do not invent behaviour not visible in the body_excerpt.
+4. Do not add examples, notes, or references unless explicitly instructed.
+5. Maintain the style convention throughout: {style}.
+6. Critical instructions (severity="critical") must be fully addressed.
+   Major and minor instructions should be addressed but may be kept concise.
+
+{JSON_SAFETY_RULES}
+"""

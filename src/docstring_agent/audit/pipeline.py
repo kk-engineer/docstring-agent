@@ -16,6 +16,7 @@ from .scorer import QualityScorer
 
 
 class AuditPipeline:
+    """Auditpipeline."""
     def __init__(self, repo_path: Path, config: Config) -> None:
         self.repo_path = repo_path
         self.config = config
@@ -28,13 +29,22 @@ class AuditPipeline:
         self.start_time: float = 0.0
 
     async def run(self) -> AuditReport:
+        """    Run.
+
+    Returns:
+        AuditReport: Description.
+    """
         self.start_time = time.perf_counter()
         await self._step_discover()
         file_results = await self._step_audit()
         await self._step_score(file_results)
 
         formatter = ReportFormatter(self.config, self.logger)
-        report = formatter.build(file_results, time.perf_counter() - self.start_time)
+        report = formatter.build(
+            file_results,
+            time.perf_counter() - self.start_time,
+            repo_path=self.repo_path,
+        )
         return report
 
     async def _step_discover(self) -> None:
