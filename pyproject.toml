@@ -1,0 +1,49 @@
+[project]
+name = "docstring-agent"
+version = "0.1.0"
+description = "NOLLM-first docstring generator: adds and improves Python docstrings using static analysis and selective LLM synthesis"
+requires-python = ">=3.11, <3.14"
+dependencies = [
+    "click>=8.1",
+    "rich>=13.0",
+    "litellm>=1.40",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0",
+    "libcst>=1.1",
+    "radon>=6.0",
+    "tomli>=2.0; python_version < '3.11'",
+]
+
+[project.scripts]
+docstring-agent = "docstring_agent.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/docstring_agent"]
+
+[tool.uv]
+dev-dependencies = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "pytest-mock>=3.0",
+    "ruff>=0.4",
+    "mypy>=1.8",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.11"
+ignore_missing_imports = true
+strict = false

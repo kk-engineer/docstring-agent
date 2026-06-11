@@ -1,0 +1,33 @@
+[app]
+name = "docstring-agent"
+version = "0.1.0"
+log_level = "INFO"
+log_file = "logs/docstring-agent.log"
+log_json = false
+
+[llm]
+provider = "nvidia"
+model = "meta/llama-3.1-8b-instruct"
+base_url = "https://integrate.api.nvidia.com/v1"
+max_tokens = 1024
+temperature = 0.2
+timeout_seconds = 30
+max_retries = 3
+reachability_check_prompt = "Say OK"
+
+[docstring_gen]
+skip_directories = [
+    "node_modules", ".git", "__pycache__", ".venv", "venv",
+    "dist", "build", ".pytest_cache", ".mypy_cache", "migrations"
+]
+docstring_style = "google"
+complexity_threshold = 4
+trivial_prefixes = ["get_", "set_", "is_", "has_"]
+trivial_dunders = [
+    "__init__", "__str__", "__repr__", "__len__", "__eq__",
+    "__hash__", "__enter__", "__exit__", "__iter__", "__next__"
+]
+llm_batch_size = 10
+dry_run = false
+improve_existing = true
+use_cache = true

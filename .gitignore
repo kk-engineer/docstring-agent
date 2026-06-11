@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# Model cache (HF weights ~2GB+)
+local_models/
+
+# Generated output
+*.md
+
+# Environment
+.venv/
+venv/
+.env
+
+# OS
+.DS_Store
+*.swp
+*.swo
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Logs
+logs
