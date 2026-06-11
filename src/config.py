@@ -134,7 +134,14 @@ class Config:
 
     @classmethod
     def _load(cls, config_path: str | Path) -> "Config":
-        """ load."""
+        """     load.
+
+    Args:
+        config_path (str | Path): Description.
+
+    Returns:
+        "Config": Description.
+    """
         path = Path(config_path)
         if not path.exists():
             print(f"ERROR: Config file not found: {path.resolve()}", file=sys.stderr)
@@ -220,7 +227,15 @@ class Config:
         return cls(app=app, llm=llm, docstring_gen=docstring_gen, audit=audit, repair=repair)
 
     def _section_table(self, title: str, items: list[tuple[str, str]]) -> Panel:
-        """ section table."""
+        """     section table.
+
+    Args:
+        title (str): Description.
+        items (list[tuple[str, str]]): Description.
+
+    Returns:
+        Panel: Description.
+    """
         table = Table(show_header=False, box=None, padding=(0, 2))
         table.add_column("key", style="yellow", no_wrap=True)
         table.add_column("value", style="white")

@@ -11,16 +11,16 @@ def _record(
     params: list | None = None,
     return_ann: str | None = None,
 ) -> MethodRecord:
-    """    Create a method record with the given name and kind.
+    """     record.
 
     Args:
-      name (str): The name of the method.
-      kind (str): The kind of the method.
-      params (list | None): The parameters of the method.
-      return_ann (str | None): The return annotation of the method.
+        name (str): Description.
+        kind (str): Description.
+        params (list | None): Description.
+        return_ann (str | None): Description.
 
     Returns:
-      A method record.
+        MethodRecord: Description.
     """
     return MethodRecord(
         file_path=Path("test.py"),
@@ -154,7 +154,9 @@ class TestHeuristicGenerator:
             "validate_input",
             params=[ParamInfo(name="data", annotation="str")],
         ))
-        assert doc == "Validate input and raise on failure."
+        assert "Validate input and raise on failure." in doc
+        assert "Args:" in doc
+        assert "data (str): Input data to process." in doc
 
     def test_returns_section_google(self) -> None:
         """Test returns section google."""
@@ -163,4 +165,6 @@ class TestHeuristicGenerator:
             "get_user",
             return_ann="dict",
         ))
-        assert doc == "Return user."
+        assert "Return user." in doc
+        assert "Returns:" in doc
+        assert "dict: Description." in doc

@@ -44,7 +44,11 @@ class Enricher:
         return records
 
     def _compute_complexity(self, record: MethodRecord) -> None:
-        """ compute complexity."""
+        """     compute complexity.
+
+    Args:
+        record (MethodRecord): Description.
+    """
         try:
             blocks = cc_visit(record.full_body)
             if blocks:
@@ -55,7 +59,14 @@ class Enricher:
             record.cyclomatic_complexity = 1
 
     def _route(self, record: MethodRecord) -> RouteDecision:
-        """ route."""
+        """     route.
+
+    Args:
+        record (MethodRecord): Description.
+
+    Returns:
+        RouteDecision: Description.
+    """
         ds = self.ds_config
         qname = record.qualified_name
         name = qname.split(".")[-1] if "." in qname else qname

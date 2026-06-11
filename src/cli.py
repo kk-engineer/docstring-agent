@@ -563,6 +563,11 @@ def repair(
 
 
 def _print_file_table(pipeline) -> None:
+    """     print file table.
+
+    Args:
+        pipeline (Any): Description.
+    """
     from .logger import Logger
     logger = Logger.get_instance()
     rows = []
@@ -584,6 +589,11 @@ def _print_file_table(pipeline) -> None:
 
 
 def _print_summary(summary) -> None:
+    """     print summary.
+
+    Args:
+        summary (Any): Description.
+    """
     from .logger import Logger
 
     logger = Logger.get_instance()
@@ -607,6 +617,11 @@ def _print_summary(summary) -> None:
 
 
 def _print_repair_summary(summary) -> None:
+    """     print repair summary.
+
+    Args:
+        summary (Any): Description.
+    """
     from .logger import Logger
 
     logger = Logger.get_instance()

@@ -39,7 +39,12 @@ class LLMGenerator:
         return records
 
     async def _generate_one_batch(self, batch_idx: int, batch: list[MethodRecord]) -> None:
-        """ generate one batch."""
+        """     generate one batch.
+
+    Args:
+        batch_idx (int): Description.
+        batch (list[MethodRecord]): Description.
+    """
         methods_json = []
         for r in batch:
             obj = {
@@ -85,7 +90,15 @@ class LLMGenerator:
                 r.generated_docstring = self._fallback_gen.generate(r)
 
     def _parse_response(self, response: str, batch: list[MethodRecord]) -> list[dict] | None:
-        """ parse response."""
+        """     parse response.
+
+    Args:
+        response (str): Description.
+        batch (list[MethodRecord]): Description.
+
+    Returns:
+        list[dict] | None: Description.
+    """
         content = response.strip()
         if content.startswith("```"):
             content = content.split("\n", 1)[-1]
@@ -101,7 +114,11 @@ class LLMGenerator:
             return None
 
     def _fallback(self, batch: list[MethodRecord]) -> None:
-        """ fallback."""
+        """     fallback.
+
+    Args:
+        batch (list[MethodRecord]): Description.
+    """
         for r in batch:
             r.generated_docstring = self._fallback_gen.generate(r)
 

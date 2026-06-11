@@ -18,6 +18,7 @@ from .scorer import QualityScorer
 class AuditPipeline:
     """Auditpipeline."""
     def __init__(self, repo_path: Path, config: Config) -> None:
+        """Initialise AuditPipeline."""
         self.repo_path = repo_path
         self.config = config
         self.logger = Logger.get_instance()
@@ -29,10 +30,10 @@ class AuditPipeline:
         self.start_time: float = 0.0
 
     async def run(self) -> AuditReport:
-        """    Run.
+        """    Run the audit pipeline, returning an AuditReport object with detailed results.
 
-    Returns:
-        AuditReport: Description.
+        Returns:
+          AuditReport
     """
         self.start_time = time.perf_counter()
         await self._step_discover()
@@ -48,6 +49,7 @@ class AuditPipeline:
         return report
 
     async def _step_discover(self) -> None:
+        """ step discover."""
         with timed_step("File Discovery", self.logger):
             skip_dirs = self.config.docstring_gen.skip_directories
             walker = FileWalker(self.repo_path, skip_dirs)
@@ -55,6 +57,7 @@ class AuditPipeline:
             self.logger.info(f"Auditing {len(self.files)} Python files in {self.repo_path}")
 
     async def _step_audit(self) -> list[FileAuditResult]:
+        """ step audit."""
         include_private = self.audit_config.include_private if self.audit_config else False
         include_dunders = self.audit_config.include_dunders if self.audit_config else False
         auditor = CoverageAuditor(include_private, include_dunders)
@@ -89,6 +92,11 @@ class AuditPipeline:
     async def _step_score(
         self, file_results: list[FileAuditResult]
     ) -> None:
+        """     step score.
+
+    Args:
+        file_results (list[FileAuditResult]): Description.
+    """
         quality_threshold = (
             self.audit_config.quality_threshold if self.audit_config else 0.65
         )

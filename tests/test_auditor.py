@@ -14,6 +14,20 @@ def _make_record(
     full_body: str = "pass",
     start_line: int = 1,
 ) -> MethodRecord:
+    """     make record.
+
+    Args:
+        qualified_name (str): Description.
+        kind (str): Description.
+        params (list | None): Description.
+        return_annotation (str | None): Description.
+        existing_docstring (str | None): Description.
+        full_body (str): Description.
+        start_line (int): Description.
+
+    Returns:
+        MethodRecord: Description.
+    """
     return MethodRecord(
         file_path=Path("/fake/file.py"),
         qualified_name=qualified_name,

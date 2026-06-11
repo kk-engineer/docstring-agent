@@ -9,6 +9,7 @@ from .models import RepairStrategy, RepairWorkItem
 class PromptBuilder:
     """Promptbuilder."""
     def __init__(self, style: str) -> None:
+        """Initialise PromptBuilder."""
         self.style = style
 
     def build_repair_batch(self, items: list[RepairWorkItem]) -> str:

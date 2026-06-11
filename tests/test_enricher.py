@@ -12,7 +12,15 @@ def _make_config(
     improve_existing: bool = True,
     complexity_threshold: int = 4,
 ) -> Config:
-    """ make config."""
+    """     make config.
+
+    Args:
+        improve_existing (bool): Description.
+        complexity_threshold (int): Description.
+
+    Returns:
+        Config: Description.
+    """
     cfg = Config.__new__(Config)
     cfg.app = None
     cfg.llm = None
@@ -39,7 +47,20 @@ def _record(
     complexity: int = 1,
     body: str = "pass\n",
 ) -> MethodRecord:
-    """ record."""
+    """     record.
+
+    Args:
+        name (str): Description.
+        kind (str): Description.
+        params (list | None): Description.
+        return_ann (str | None): Description.
+        existing (str | None): Description.
+        complexity (int): Description.
+        body (str): Description.
+
+    Returns:
+        MethodRecord: Description.
+    """
     return MethodRecord(
         file_path=Path("test.py"),
         qualified_name=name,

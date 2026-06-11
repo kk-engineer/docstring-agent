@@ -10,10 +10,13 @@ class RepairPlanner:
     """Repairplanner."""
 
     FAIL_THRESHOLD = 0.6
+    PUBLIC_FAIL_THRESHOLD = 0.70
+    PRIVATE_FAIL_THRESHOLD = 0.50
     SUMMARY_CRITICAL = 0.5
     DEFAULT_TOKEN_BUDGET = 50_000
 
     def __init__(self, config: Config) -> None:
+        """Initialise RepairPlanner."""
         self.config = config
         self.logger = Logger.get_instance()
         self.repair_cfg = getattr(config, "repair", None)
@@ -25,7 +28,7 @@ class RepairPlanner:
         """    Plan.
 
     Args:
-        items (list[RepairWorkItem]): Description.
+        items (list[RepairWorkItem]): Collection of items.
 
     Returns:
         list[RepairWorkItem]: Description.
@@ -63,8 +66,19 @@ class RepairPlanner:
             return items
 
     def _assign_strategy(self, item: RepairWorkItem) -> RepairStrategy:
+        """     assign strategy.
+
+    Args:
+        item (RepairWorkItem): Item.
+
+    Returns:
+        RepairStrategy: Description.
+    """
         cr = item.coverage_record
         q = cr.quality
+
+        if q and q.composite >= 0.85:
+            return RepairStrategy.SKIP
 
         if cr.status == CoverageStatus.PRESENT and (q is None or not q.below_threshold):
             return RepairStrategy.SKIP
@@ -87,7 +101,13 @@ class RepairPlanner:
         if only_structural and summary_score >= 0.8 and specificity_score >= 0.65:
             return RepairStrategy.HEURISTIC_PATCH
 
-        if summary_score < self.FAIL_THRESHOLD or specificity_score < self.FAIL_THRESHOLD:
+        threshold = (
+            self.PRIVATE_FAIL_THRESHOLD
+            if item.method_record.qualified_name.split(".")[-1].startswith("_")
+            else self.PUBLIC_FAIL_THRESHOLD
+        )
+
+        if summary_score < threshold or specificity_score < threshold:
             return RepairStrategy.SURGICAL_LLM
 
         if args_score < 0.5:
@@ -96,6 +116,11 @@ class RepairPlanner:
         return RepairStrategy.HEURISTIC_PATCH
 
     def _build_instructions(self, item: RepairWorkItem) -> None:
+        """     build instructions.
+
+    Args:
+        item (RepairWorkItem): Item.
+    """
         q = item.coverage_record.quality
         if q is None:
             return
@@ -109,6 +134,11 @@ class RepairPlanner:
             )
 
     def _build_guards(self, item: RepairWorkItem) -> None:
+        """     build guards.
+
+    Args:
+        item (RepairWorkItem): Item.
+    """
         q = item.coverage_record.quality
         if q is None:
             return
@@ -128,6 +158,14 @@ class RepairPlanner:
             item.guards.append(PreserveGuard(dimension=d.name, instruction=text))
 
     def _failing_dimensions(self, q) -> list[RepairInstruction]:
+        """     failing dimensions.
+
+    Args:
+        q (Any): Q.
+
+    Returns:
+        list[RepairInstruction]: Description.
+    """
         result: list[RepairInstruction] = []
         for d in q.dimensions:
             if d.score < self.FAIL_THRESHOLD:
@@ -141,12 +179,29 @@ class RepairPlanner:
         return result
 
     def _dim_score(self, q, name: str) -> float:
+        """     dim score.
+
+    Args:
+        q (Any): Q.
+        name (str): Name of the entity.
+
+    Returns:
+        float: Description.
+    """
         for d in q.dimensions:
             if d.name == name:
                 return d.score
         return 1.0
 
     def _severity(self, score: float) -> str:
+        """     severity.
+
+    Args:
+        score (float): Score.
+
+    Returns:
+        str: Description.
+    """
         if score < 0.3:
             return "critical"
         if score < self.FAIL_THRESHOLD:
@@ -154,6 +209,15 @@ class RepairPlanner:
         return "minor"
 
     def _action_text(self, dim, item) -> str:
+        """     action text.
+
+    Args:
+        dim (Any): Dim.
+        item (Any): Item.
+
+    Returns:
+        str: Description.
+    """
         mr = item.method_record
         if dim.name == "summary":
             if dim.score < 0.3:
@@ -198,6 +262,14 @@ class RepairPlanner:
         return f"Fix the {dim.name} section. Issue: {dim.reason}."
 
     def _count_documented(self, dim) -> int:
+        """     count documented.
+
+    Args:
+        dim (Any): Dim.
+
+    Returns:
+        int: Description.
+    """
         try:
             parts = dim.reason.split("/")
             return int(parts[0])
@@ -205,6 +277,11 @@ class RepairPlanner:
             return 0
 
     def _apply_budget_constraints(self, items: list[RepairWorkItem]) -> None:
+        """     apply budget constraints.
+
+    Args:
+        items (list[RepairWorkItem]): Collection of items.
+    """
         surgical = [i for i in items if i.strategy == RepairStrategy.SURGICAL_LLM]
         total_est = sum(self._estimate_tokens(i) for i in surgical)
 
@@ -234,5 +311,13 @@ class RepairPlanner:
             )
 
     def _estimate_tokens(self, item: RepairWorkItem) -> int:
+        """     estimate tokens.
+
+    Args:
+        item (RepairWorkItem): Item.
+
+    Returns:
+        int: Description.
+    """
         body_len = len(item.method_record.full_body)
         return body_len // 3 + 300

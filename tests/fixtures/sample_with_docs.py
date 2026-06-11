@@ -24,8 +24,8 @@ class ConfigParser:
     def validate_path(self) -> bool:
         """    Validate path.
 
-    Returns:
-        bool: Description.
+        Returns:
+            bool: Description.
     """
         if not self.path.exists():
             return False
@@ -59,16 +59,16 @@ class ConfigParser:
     def default_config() -> dict[str, Any]:
         """    Default config.
 
-    Returns:
-        dict[str, Any]: Description.
+        Returns:
+            dict[str, Any]: Description.
     """
         return {"version": 1, "debug": False}
 
     def complex_parse(self) -> dict[str, Any]:
         """    Complex parse.
 
-    Returns:
-        dict[str, Any]: Description.
+        Returns:
+            dict[str, Any]: Description.
     """
         result: dict[str, Any] = {}
         for key, value in self._data.items():

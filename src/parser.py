@@ -12,7 +12,15 @@ from .models import MethodRecord, ParamInfo
 
 
 def _get_kind(node: cst.FunctionDef, in_class: bool) -> str:
-    """ get kind."""
+    """     get kind.
+
+    Args:
+        node (cst.FunctionDef): Description.
+        in_class (bool): Description.
+
+    Returns:
+        str: Description.
+    """
     if not in_class:
         return "function"
     for dec in node.decorators:
@@ -25,14 +33,29 @@ def _get_kind(node: cst.FunctionDef, in_class: bool) -> str:
 
 
 def _annotation_str(module: cst.Module, annotation: Optional[cst.BaseExpression]) -> Optional[str]:
-    """ annotation str."""
+    """     annotation str.
+
+    Args:
+        module (cst.Module): Description.
+        annotation (Optional[cst.BaseExpression]): Description.
+
+    Returns:
+        Optional[str]: Description.
+    """
     if annotation is None:
         return None
     return module.code_for_node(annotation)
 
 
 def _extract_docstring(node: cst.FunctionDef | cst.ClassDef) -> Optional[str]:
-    """ extract docstring."""
+    """     extract docstring.
+
+    Args:
+        node (cst.FunctionDef | cst.ClassDef): Description.
+
+    Returns:
+        Optional[str]: Description.
+    """
     body = node.body
     stmts = body.body
     if not stmts:
@@ -51,7 +74,16 @@ def _extract_docstring(node: cst.FunctionDef | cst.ClassDef) -> Optional[str]:
 
 
 def _body_source(source_lines: list[str], node: cst.FunctionDef | cst.ClassDef, pos: tuple) -> str:
-    """ body source."""
+    """     body source.
+
+    Args:
+        source_lines (list[str]): Description.
+        node (cst.FunctionDef | cst.ClassDef): Description.
+        pos (tuple): Description.
+
+    Returns:
+        str: Description.
+    """
     start_line, start_col = pos[0]
     end_line, end_col = pos[1]
     body_start = start_line  # line of the `:` or body opening
@@ -70,7 +102,15 @@ def _body_source(source_lines: list[str], node: cst.FunctionDef | cst.ClassDef, 
 
 
 def _body_first_200(source_lines: list[str], node: cst.FunctionDef | cst.ClassDef) -> str:
-    """ body first 200."""
+    """     body first 200.
+
+    Args:
+        source_lines (list[str]): Description.
+        node (cst.FunctionDef | cst.ClassDef): Description.
+
+    Returns:
+        str: Description.
+    """
     full = _get_body_text(source_lines, node)
     if not full:
         return ""
@@ -80,7 +120,15 @@ def _body_first_200(source_lines: list[str], node: cst.FunctionDef | cst.ClassDe
 
 def _get_body_text(source_lines: list[str],
                    node: "cst.FunctionDef | cst.ClassDef") -> str:
-    """ get body text."""
+    """     get body text.
+
+    Args:
+        source_lines (list[str]): Description.
+        node ("cst.FunctionDef | cst.ClassDef"): Description.
+
+    Returns:
+        str: Description.
+    """
     body = node.body
     if isinstance(body, cst.IndentedBlock):
         first_stmt = body.body[0] if body.body else None
@@ -108,7 +156,15 @@ def _get_body_text(source_lines: list[str],
 
 
 def _get_node_end_line(node: cst.CSTNode, source_lines: list[str]) -> int:
-    """ get node end line."""
+    """     get node end line.
+
+    Args:
+        node (cst.CSTNode): Description.
+        source_lines (list[str]): Description.
+
+    Returns:
+        int: Description.
+    """
     val = getattr(node, "end_lineno", None)
     if val is not None:
         return val
@@ -116,13 +172,10 @@ def _get_node_end_line(node: cst.CSTNode, source_lines: list[str]) -> int:
 
 
 def _pos_for_node(node: cst.CSTNode):
-    """    Get the position of the given node.
+    """     pos for node.
 
     Args:
-      node (cst.CSTNode): The node to get the position for.
-
-    Returns:
-      The position of the node.
+        node (cst.CSTNode): Description.
     """
     lineno = getattr(node, "lineno", 1)
     col = getattr(node, "col_offset", 0)
@@ -148,7 +201,14 @@ class _RecordCollector(cst.CSTVisitor):
         self._class_stack: list[str] = []
 
     def _qualified(self, name: str) -> str:
-        """ qualified."""
+        """     qualified.
+
+    Args:
+        name (str): Description.
+
+    Returns:
+        str: Description.
+    """
         if self._class_stack:
             return f"{'.'.join(self._class_stack)}.{name}"
         return name
@@ -293,7 +353,14 @@ class CSTParser:
             return collector.records
 
     def _is_trivial_body(self, body_source: str) -> bool:
-        """ is trivial body."""
+        """     is trivial body.
+
+    Args:
+        body_source (str): Description.
+
+    Returns:
+        bool: Description.
+    """
         stripped = body_source.strip()
         if not stripped:
             return True

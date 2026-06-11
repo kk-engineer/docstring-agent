@@ -26,6 +26,7 @@ class RepairPipeline:
         llm: Optional[LLMClient] = None,
         dry_run: bool = False,
     ) -> None:
+        """Initialise RepairPipeline."""
         self.repo_path = repo_path
         self.config = config
         self.llm = llm
@@ -57,6 +58,14 @@ class RepairPipeline:
         return summary
 
     async def _step_load_report(self, report_path: Path) -> list[RepairWorkItem]:
+        """     step load report.
+
+    Args:
+        report_path (Path): Description.
+
+    Returns:
+        list[RepairWorkItem]: Description.
+    """
         with timed_step("Load Audit Report", self.logger):
             reader = AuditReportReader(self.repo_path, self.logger)
             items = reader.load(report_path)
@@ -66,6 +75,7 @@ class RepairPipeline:
             return items
 
     async def _step_audit(self) -> list[RepairWorkItem]:
+        """ step audit."""
         with timed_step("Run Audit", self.logger):
             pipeline = AuditPipeline(self.repo_path, self.config)
             report: AuditReport = await pipeline.run()
@@ -91,6 +101,14 @@ class RepairPipeline:
             return items
 
     def _find_method_record(self, cr: CoverageRecord) -> Optional[MethodRecord]:
+        """     find method record.
+
+    Args:
+        cr (CoverageRecord): Description.
+
+    Returns:
+        Optional[MethodRecord]: Description.
+    """
         try:
             records = self.parser.parse_file(cr.file_path)
         except Exception:
@@ -101,18 +119,43 @@ class RepairPipeline:
         return None
 
     async def _step_plan(self, items: list[RepairWorkItem]) -> list[RepairWorkItem]:
+        """     step plan.
+
+    Args:
+        items (list[RepairWorkItem]): Description.
+
+    Returns:
+        list[RepairWorkItem]: Description.
+    """
         planner = RepairPlanner(self.config)
         return planner.plan(items)
 
     async def _step_execute(
         self, items: list[RepairWorkItem]
     ) -> list[RepairResult]:
+        """     step execute.
+
+    Args:
+        items (list[RepairWorkItem]): Description.
+
+    Returns:
+        list[RepairResult]: Description.
+    """
         executor = RepairExecutor(self.config, self.llm, self.logger, self.dry_run)
         return await executor.execute(items)
 
     def _build_summary(
         self, results: list[RepairResult], start: float
     ) -> RepairSummary:
+        """     build summary.
+
+    Args:
+        results (list[RepairResult]): Description.
+        start (float): Description.
+
+    Returns:
+        RepairSummary: Description.
+    """
         elapsed = time.perf_counter() - start
         total = len(results)
         repaired = sum(1 for r in results if r.success and r.new_docstring is not None)

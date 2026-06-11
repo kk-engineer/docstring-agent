@@ -28,6 +28,7 @@ from .models import (
 class ReportFormatter:
     """Reportformatter."""
     def __init__(self, config: Config, logger: Logger) -> None:
+        """Initialise ReportFormatter."""
         self.config = config
         self.logger = logger
         self._console = logger._console
@@ -70,6 +71,11 @@ class ReportFormatter:
         return report
 
     def _aggregate(self, report: AuditReport) -> None:
+        """     aggregate.
+
+    Args:
+        report (AuditReport): Description.
+    """
         report.total_files = len(report.file_results)
         report.total_methods = sum(f.total for f in report.file_results)
         report.coverage_count = sum(f.coverage_count for f in report.file_results)
@@ -138,6 +144,11 @@ class ReportFormatter:
         self._render_gate_summary(report)
 
     def _render_header(self, report: AuditReport) -> None:
+        """     render header.
+
+    Args:
+        report (AuditReport): Description.
+    """
         header = Panel(
             Text(
                 f"{report.repo_path.name}  |  {report.total_files} files  |  "
@@ -151,6 +162,11 @@ class ReportFormatter:
         self._console.print(header)
 
     def _render_coverage_table(self, report: AuditReport) -> None:
+        """     render coverage table.
+
+    Args:
+        report (AuditReport): Description.
+    """
         table = Table(
             title="Coverage by File",
             title_style="bold cyan",
@@ -204,6 +220,11 @@ class ReportFormatter:
         self._console.print(table)
 
     def _render_missing_list(self, report: AuditReport) -> None:
+        """     render missing list.
+
+    Args:
+        report (AuditReport): Description.
+    """
         self._console.print()
         self._console.print(
             Text(
@@ -226,6 +247,11 @@ class ReportFormatter:
             )
 
     def _render_partial_list(self, report: AuditReport) -> None:
+        """     render partial list.
+
+    Args:
+        report (AuditReport): Description.
+    """
         self._console.print()
         self._console.print(
             Text(
@@ -265,6 +291,11 @@ class ReportFormatter:
             )
 
     def _render_quality_table(self, report: AuditReport) -> None:
+        """     render quality table.
+
+    Args:
+        report (AuditReport): Description.
+    """
         self._console.print()
         table = Table(
             title=f"Quality Flags (below threshold {report.quality_threshold})",
@@ -318,6 +349,11 @@ class ReportFormatter:
         self._console.print(table)
 
     def _render_gate_summary(self, report: AuditReport) -> None:
+        """     render gate summary.
+
+    Args:
+        report (AuditReport): Description.
+    """
         self._console.print()
         cov_gate = report.passes_coverage_gate
         qual_gate = report.passes_quality_gate
@@ -339,8 +375,12 @@ class ReportFormatter:
             qual_text.append("PASS", style="bold green")
         else:
             qual_text.append("FAIL", style="bold red")
+        operator = ">=" if qual_gate else "<"
+
         qual_text.append(
-            f"  (mean {report.overall_mean_quality:.2f} <= {report.quality_threshold:.2f})"
+            f"  (mean {report.overall_mean_quality:.2f} "
+            f"{operator} "
+            f"{report.quality_threshold:.2f})"
         )
         self._console.print(qual_text)
 
@@ -615,6 +655,14 @@ class ReportFormatter:
         return "\n".join(lines)
 
     def _score_bar(self, score: float) -> str:
+        """     score bar.
+
+    Args:
+        score (float): Description.
+
+    Returns:
+        str: Description.
+    """
         filled = max(0, min(8, round(score * 8)))
         empty = 8 - filled
         return "\u2588" * filled + "\u2591" * empty

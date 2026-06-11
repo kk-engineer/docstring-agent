@@ -31,6 +31,7 @@ class RepairExecutor:
         logger: Logger,
         dry_run: bool,
     ) -> None:
+        """Initialise RepairExecutor."""
         self.config = config
         self.llm = llm
         self.logger = logger
@@ -40,6 +41,7 @@ class RepairExecutor:
         self.patcher = HeuristicPatcher(self.style)
         self.prompt_builder = PromptBuilder(self.style)
         self.heuristic_gen = HeuristicGenerator(self.style)
+        self.patcher.generator = self.heuristic_gen
         self.writer = DocstringWriter(dry_run, self.style)
         self.backup_originals = (
             self.repair_cfg.backup_originals if self.repair_cfg else True
@@ -50,7 +52,7 @@ class RepairExecutor:
         """    Execute.
 
     Args:
-        items (list[RepairWorkItem]): Description.
+        items (list[RepairWorkItem]): Collection of items.
 
     Returns:
         list[RepairResult]: Description.
@@ -88,6 +90,15 @@ class RepairExecutor:
         file_path: Path,
         items: list[RepairWorkItem],
     ) -> list[RepairResult]:
+        """     execute file.
+
+    Args:
+        file_path (Path): Path to the file.
+        items (list[RepairWorkItem]): Collection of items.
+
+    Returns:
+        list[RepairResult]: Description.
+    """
         heuristic_items = [i for i in items if i.strategy == RepairStrategy.HEURISTIC_PATCH]
         surgical_items = [i for i in items if i.strategy == RepairStrategy.SURGICAL_LLM]
         fullgen_items = [i for i in items if i.strategy == RepairStrategy.FULL_GENERATION]
@@ -135,6 +146,15 @@ class RepairExecutor:
         file_path: Path,
         items: list[RepairWorkItem],
     ) -> list[RepairResult]:
+        """     execute heuristic patch.
+
+    Args:
+        file_path (Path): Path to the file.
+        items (list[RepairWorkItem]): Collection of items.
+
+    Returns:
+        list[RepairResult]: Description.
+    """
         results: list[RepairResult] = []
         for item in items:
             mr = item.method_record
@@ -171,6 +191,16 @@ class RepairExecutor:
         items: list[RepairWorkItem],
         mode: str,
     ) -> list[RepairResult]:
+        """     execute llm batch.
+
+    Args:
+        file_path (Path): Path to the file.
+        items (list[RepairWorkItem]): Collection of items.
+        mode (str): Mode.
+
+    Returns:
+        list[RepairResult]: Description.
+    """
         if not self.llm:
             return await self._execute_heuristic_patch(file_path, items)
 
@@ -198,6 +228,11 @@ class RepairExecutor:
         results: list[RepairResult] = []
         name_to_item = {i.method_record.qualified_name: i for i in items}
         for entry in parsed:
+            if not isinstance(entry, dict):
+                self.logger.warning(
+                    f"Skipping non-dict entry in LLM response: {type(entry).__name__}"
+                )
+                continue
             qname = entry.get("qualified_name")
             docstring = entry.get("docstring")
             if qname and docstring and qname in name_to_item:
@@ -267,6 +302,15 @@ class RepairExecutor:
     def _parse_llm_response(
         self, response: str, items: list[RepairWorkItem]
     ) -> Optional[list[dict]]:
+        """     parse llm response.
+
+    Args:
+        response (str): Response object.
+        items (list[RepairWorkItem]): Collection of items.
+
+    Returns:
+        Optional[list[dict]]: Description.
+    """
         content = response.strip()
         if content.startswith("```"):
             content = content.split("\n", 1)[-1]
@@ -282,6 +326,15 @@ class RepairExecutor:
             return None
 
     def _check_guards(self, item: RepairWorkItem, new_docstring: str) -> bool:
+        """     check guards.
+
+    Args:
+        item (RepairWorkItem): Item.
+        new_docstring (str): New docstring.
+
+    Returns:
+        bool: Description.
+    """
         if not item.guards:
             return True
         old_doc = item.method_record.existing_docstring or ""
@@ -289,8 +342,9 @@ class RepairExecutor:
             if guard.dimension == "summary":
                 old_summary = self._get_summary_line(old_doc)
                 new_summary = self._get_summary_line(new_docstring)
-                if old_summary and old_summary not in new_summary:
-                    return False
+                if old_summary:
+                    if old_summary.strip() != new_summary.strip():
+                        return False
             if guard.dimension in ("args_coverage", "returns", "raises"):
                 section_text = self._extract_section_text(old_doc, guard.dimension)
                 if section_text and section_text not in new_docstring:
@@ -298,6 +352,14 @@ class RepairExecutor:
         return True
 
     def _get_summary_line(self, doc: str) -> str:
+        """     get summary line.
+
+    Args:
+        doc (str): Doc.
+
+    Returns:
+        str: Description.
+    """
         for line in doc.splitlines():
             line = line.strip()
             if line:
@@ -305,6 +367,15 @@ class RepairExecutor:
         return ""
 
     def _extract_section_text(self, doc: str, dimension: str) -> str:
+        """     extract section text.
+
+    Args:
+        doc (str): Doc.
+        dimension (str): Dimension.
+
+    Returns:
+        str: Description.
+    """
         import re
 
         headers = {
@@ -327,6 +398,7 @@ class RepairExecutor:
         for i in range(start + 1, len(lines)):
             stripped = lines[i].strip()
             if not stripped:
+                result.append(lines[i])
                 continue
             if re.match(r"^\s*(Args|Arguments|Parameters|Returns|Return|Raises|Raise|Note|Example):", stripped):
                 break

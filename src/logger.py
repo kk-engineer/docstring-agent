@@ -38,7 +38,15 @@ _LOG_LEVELS = {
 
 
 def _make_separator(char: str = "\u2500", width: int = 60) -> str:
-    """ make separator."""
+    """     make separator.
+
+    Args:
+        char (str): Description.
+        width (int): Description.
+
+    Returns:
+        str: Description.
+    """
     return char * width
 
 
@@ -107,7 +115,13 @@ class Logger:
         cls._instance = None
 
     def _log(self, level: int, message: str, style: Optional[str] = None, **kwargs: Any) -> None:
-        """ log."""
+        """     log.
+
+    Args:
+        level (int): Description.
+        message (str): Description.
+        style (Optional[str]): Description.
+    """
         if style:
             self._console.print(Text(message, style=style))
         else:
@@ -238,15 +252,12 @@ class Logger:
 
     @contextlib.contextmanager
     def progress_bar(self, total: int, description: str = "Processing", transient: bool = True):
-        """    Display a progress bar with the given total and description.
+        """    Progress bar.
 
     Args:
-      total (int): The total number of steps.
-      description (str): The description of the progress bar.
-      transient (bool): Whether the progress bar is transient.
-
-    Returns:
-      None
+        total (int): Description.
+        description (str): Description.
+        transient (bool): Description.
     """
         progress = Progress(
             SpinnerColumn(),
@@ -265,8 +276,8 @@ class Logger:
     def get_logger(self) -> logging.Logger:
         """    Get logger.
 
-    Returns:
-        logging.Logger: Description.
+        Returns:
+            logging.Logger: Description.
     """
         return self._logger
 

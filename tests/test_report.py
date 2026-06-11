@@ -12,6 +12,7 @@ _shared_config: Config | None = None
 
 
 def _get_config() -> Config:
+    """ get config."""
     global _shared_config
     if _shared_config is None:
         _shared_config = Config(

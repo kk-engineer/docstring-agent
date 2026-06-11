@@ -19,17 +19,18 @@ class QualityScorer:
     }
 
     PLACEHOLDER_PATTERNS = [
-        r"^TODO",
-        r"^FIXME",
-        r"^TBD",
-        r"^placeholder",
-        r"^This method",
-        r"^This function",
-        r"^This class",
-        r"^\w+\.",
+        r"^TODO\b",
+        r"^FIXME\b",
+        r"^TBD\b",
+        r"^placeholder\b",
+        r"^This method\b",
+        r"^This function\b",
+        r"^This class\b",
+        r"^Description\.?$",
     ]
 
     def __init__(self, quality_threshold: float) -> None:
+        """Initialise QualityScorer."""
         self.quality_threshold = quality_threshold
         self.logger = Logger.get_instance()
 
@@ -37,7 +38,7 @@ class QualityScorer:
         """    Score.
 
     Args:
-        record (CoverageRecord): Description.
+        record (CoverageRecord): Record.
 
     Returns:
         QualityScore: Description.
@@ -64,7 +65,7 @@ class QualityScorer:
         """    Score batch.
 
     Args:
-        records (list[CoverageRecord]): Description.
+        records (list[CoverageRecord]): Collection of records.
 
     Returns:
         list[CoverageRecord]: Description.
@@ -118,6 +119,15 @@ class QualityScorer:
     def _score_summary(
         self, doc: str, record: CoverageRecord
     ) -> ScoreDimension:
+        """     score summary.
+
+    Args:
+        doc (str): Doc.
+        record (CoverageRecord): Record.
+
+    Returns:
+        ScoreDimension: Description.
+    """
         summary = self._get_summary_line(doc)
         if not summary:
             return ScoreDimension(
@@ -168,6 +178,15 @@ class QualityScorer:
     def _score_args_coverage(
         self, doc: str, record: CoverageRecord
     ) -> ScoreDimension:
+        """     score args coverage.
+
+    Args:
+        doc (str): Doc.
+        record (CoverageRecord): Record.
+
+    Returns:
+        ScoreDimension: Description.
+    """
         if record.param_count == 0:
             return ScoreDimension(
                 name="args_coverage", score=1.0, weight=self.WEIGHTS["args_coverage"],
@@ -199,6 +218,14 @@ class QualityScorer:
         )
 
     def _count_documented_params(self, doc: str) -> int:
+        """     count documented params.
+
+    Args:
+        doc (str): Doc.
+
+    Returns:
+        int: Description.
+    """
         count = 0
         for line in doc.splitlines():
             stripped = line.strip()
@@ -211,7 +238,16 @@ class QualityScorer:
     def _score_returns(
         self, doc: str, record: CoverageRecord
     ) -> ScoreDimension:
-        if not record.has_return_annotation:
+        """     score returns.
+
+    Args:
+        doc (str): Doc.
+        record (CoverageRecord): Record.
+
+    Returns:
+        ScoreDimension: Description.
+    """
+        if (not record.has_return_annotation and record.kind != "property"):
             return ScoreDimension(
                 name="returns", score=1.0, weight=self.WEIGHTS["returns"],
                 reason="No return annotation - N/A",
@@ -233,6 +269,15 @@ class QualityScorer:
     def _score_specificity(
         self, doc: str, record: CoverageRecord
     ) -> ScoreDimension:
+        """     score specificity.
+
+    Args:
+        doc (str): Doc.
+        record (CoverageRecord): Record.
+
+    Returns:
+        ScoreDimension: Description.
+    """
         stripped = doc.strip()
         doc_len = len(stripped)
         complexity = record.cyclomatic_complexity
@@ -263,6 +308,15 @@ class QualityScorer:
     def _score_raises(
         self, doc: str, record: CoverageRecord
     ) -> ScoreDimension:
+        """     score raises.
+
+    Args:
+        doc (str): Doc.
+        record (CoverageRecord): Record.
+
+    Returns:
+        ScoreDimension: Description.
+    """
         if not record.has_raise_statements:
             return ScoreDimension(
                 name="raises", score=1.0, weight=self.WEIGHTS["raises"],
@@ -283,6 +337,14 @@ class QualityScorer:
         )
 
     def _get_summary_line(self, doc: str) -> str:
+        """     get summary line.
+
+    Args:
+        doc (str): Doc.
+
+    Returns:
+        str: Description.
+    """
         for line in doc.splitlines():
             line = line.strip()
             if line:

@@ -22,7 +22,15 @@ class TemplateGenerator:
         return self._summary(name, record)
 
     def _summary(self, name: str, record: MethodRecord) -> str:
-        """ summary."""
+        """     summary.
+
+    Args:
+        name (str): Description.
+        record (MethodRecord): Description.
+
+    Returns:
+        str: Description.
+    """
         if name == "__init__":
             class_name = record.qualified_name.split(".")[0] if "." in record.qualified_name else ""
             return f"Initialise {class_name}." if class_name else "Initialise."

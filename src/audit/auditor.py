@@ -13,6 +13,7 @@ from .models import CoverageRecord, CoverageStatus
 class CoverageAuditor:
     """Coverageauditor."""
     def __init__(self, include_private: bool, include_dunders: bool) -> None:
+        """Initialise CoverageAuditor."""
         self.include_private = include_private
         self.include_dunders = include_dunders
         self.logger = Logger.get_instance()
@@ -57,6 +58,14 @@ class CoverageAuditor:
             return result
 
     def _apply_filters(self, records: list[MethodRecord]) -> list[MethodRecord]:
+        """     apply filters.
+
+    Args:
+        records (list[MethodRecord]): Description.
+
+    Returns:
+        list[MethodRecord]: Description.
+    """
         private = 0
         dunder = 0
         filtered: list[MethodRecord] = []
@@ -76,6 +85,14 @@ class CoverageAuditor:
         return filtered
 
     def _to_coverage_record(self, record: MethodRecord) -> CoverageRecord:
+        """     to coverage record.
+
+    Args:
+        record (MethodRecord): Description.
+
+    Returns:
+        CoverageRecord: Description.
+    """
         doc = record.existing_docstring
         status = self._classify(record)
         complexity = self._compute_complexity(record)
@@ -97,6 +114,14 @@ class CoverageAuditor:
         )
 
     def _classify(self, record: MethodRecord) -> CoverageStatus:
+        """     classify.
+
+    Args:
+        record (MethodRecord): Description.
+
+    Returns:
+        CoverageStatus: Description.
+    """
         doc = record.existing_docstring
         if doc is None:
             return CoverageStatus.MISSING
@@ -132,6 +157,14 @@ class CoverageAuditor:
         return CoverageStatus.PARTIAL if is_partial else CoverageStatus.PRESENT
 
     def _get_summary_line(self, doc: str) -> str:
+        """     get summary line.
+
+    Args:
+        doc (str): Description.
+
+    Returns:
+        str: Description.
+    """
         for line in doc.splitlines():
             line = line.strip()
             if line:
@@ -139,18 +172,51 @@ class CoverageAuditor:
         return ""
 
     def _has_section(self, docstring: str, patterns: list[str]) -> bool:
+        """     has section.
+
+    Args:
+        docstring (str): Description.
+        patterns (list[str]): Description.
+
+    Returns:
+        bool: Description.
+    """
         for pattern in patterns:
             if re.search(pattern, docstring, re.MULTILINE):
                 return True
         return False
 
     def _count_params(self, record: MethodRecord) -> int:
+        """     count params.
+
+    Args:
+        record (MethodRecord): Description.
+
+    Returns:
+        int: Description.
+    """
         return len(record.params)
 
     def _has_raise_statements(self, body: str) -> bool:
+        """     has raise statements.
+
+    Args:
+        body (str): Description.
+
+    Returns:
+        bool: Description.
+    """
         return bool(re.search(r"^\s*raise\s", body, re.MULTILINE))
 
     def _compute_complexity(self, record: MethodRecord) -> int:
+        """     compute complexity.
+
+    Args:
+        record (MethodRecord): Description.
+
+    Returns:
+        int: Description.
+    """
         try:
             blocks = cc_visit(record.full_body)
             if blocks:

@@ -25,6 +25,7 @@ class AuditReportSchemaError(Exception):
 class AuditReportReader:
     """Auditreportreader."""
     def __init__(self, repo_path: Path, logger: Logger) -> None:
+        """Initialise AuditReportReader."""
         self.repo_path = repo_path
         self.logger = logger
         self.parser = CSTParser("google")
@@ -52,13 +53,22 @@ class AuditReportReader:
             quality_flagged_count = 0
 
             for file_entry in data.get("files", []):
+                if not isinstance(file_entry, dict):
+                    self.logger.warning(f"Skipping non-dict file entry: {type(file_entry).__name__}")
+                    continue
                 rel_path = file_entry["path"]
+                if not isinstance(rel_path, str):
+                    self.logger.warning(f"Skipping entry with non-string path: {type(rel_path).__name__}")
+                    continue
                 abs_path = (self.repo_path / rel_path).resolve()
                 methods_data = file_entry.get("methods", [])
 
                 all_records = self._reparse_file(abs_path)
 
                 for m in methods_data:
+                    if not isinstance(m, dict):
+                        self.logger.warning(f"Skipping non-dict method entry: {type(m).__name__}")
+                        continue
                     qname = m["qualified_name"]
                     status_str = m["status"]
                     quality_data = m.get("quality")
@@ -114,6 +124,11 @@ class AuditReportReader:
             return items
 
     def _validate_schema(self, data: dict[str, Any]) -> None:
+        """     validate schema.
+
+    Args:
+        data (dict[str, Any]): Description.
+    """
         if "files" not in data:
             raise AuditReportSchemaError("Missing 'files' key in audit report")
         if "meta" not in data:
@@ -125,6 +140,14 @@ class AuditReportReader:
                 raise AuditReportSchemaError(f"File entry {fe.get('path')} missing 'methods'")
 
     def _reparse_file(self, abs_path: Path) -> list[MethodRecord]:
+        """     reparse file.
+
+    Args:
+        abs_path (Path): Description.
+
+    Returns:
+        list[MethodRecord]: Description.
+    """
         if not abs_path.exists():
             self.logger.warning(f"Source file not found: {abs_path}")
             return []
@@ -137,6 +160,16 @@ class AuditReportReader:
     def _find_method_record(
         self, records: list[MethodRecord], qualified_name: str, start_line: int
     ) -> Optional[MethodRecord]:
+        """     find method record.
+
+    Args:
+        records (list[MethodRecord]): Description.
+        qualified_name (str): Description.
+        start_line (int): Description.
+
+    Returns:
+        Optional[MethodRecord]: Description.
+    """
         candidates = [r for r in records if r.qualified_name == qualified_name]
         if len(candidates) == 1:
             self.logger.debug(f"  Re-parsed {qualified_name}")
@@ -152,22 +185,26 @@ class AuditReportReader:
         file_path: Path,
         qualified_name: str,
         status_str: str,
-        quality_data: Optional[dict[str, Any]],
+        quality_data: Any,
         start_line: int,
     ) -> CoverageRecord:
         status = CoverageStatus(status_str)
         quality: Optional[QualityScore] = None
-        if quality_data:
+        if isinstance(quality_data, dict):
             dims = []
-            for d in quality_data.get("dimensions", []):
-                dims.append(
-                    ScoreDimension(
-                        name=d["name"],
-                        score=d["score"],
-                        weight=d.get("weight", 0.0),
-                        reason=d.get("reason", ""),
+            raw_dims = quality_data.get("dimensions", [])
+            if isinstance(raw_dims, list):
+                for d in raw_dims:
+                    if not isinstance(d, dict):
+                        continue
+                    dims.append(
+                        ScoreDimension(
+                            name=d.get("name", ""),
+                            score=d.get("score", 0.0),
+                            weight=d.get("weight", 0.0),
+                            reason=d.get("reason", ""),
+                        )
                     )
-                )
             quality = QualityScore(
                 composite=quality_data.get("composite", 0.0),
                 dimensions=dims,

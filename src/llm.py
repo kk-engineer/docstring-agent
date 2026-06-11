@@ -69,7 +69,15 @@ class LLMClient:
         }
 
     async def _acomplete(self, prompt: str, system: Optional[str] = None) -> str:
-        """ acomplete."""
+        """     acomplete.
+
+    Args:
+        prompt (str): Description.
+        system (Optional[str]): Description.
+
+    Returns:
+        str: Description.
+    """
         import litellm
 
         params = self._get_litellm_params()

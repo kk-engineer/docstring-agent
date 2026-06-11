@@ -61,8 +61,8 @@ class FileAuditResult:
     def total(self) -> int:
         """    Total.
 
-    Returns:
-        int: Description.
+        Returns:
+            int: The total value.
     """
         return len(self.records)
 
@@ -70,8 +70,8 @@ class FileAuditResult:
     def coverage_count(self) -> int:
         """    Coverage count.
 
-    Returns:
-        int: Description.
+        Returns:
+            int: Description.
     """
         return sum(1 for r in self.records if r.status == CoverageStatus.PRESENT)
 
@@ -79,8 +79,8 @@ class FileAuditResult:
     def missing_count(self) -> int:
         """    Missing count.
 
-    Returns:
-        int: Description.
+        Returns:
+            int: Description.
     """
         return sum(1 for r in self.records if r.status == CoverageStatus.MISSING)
 
@@ -88,8 +88,8 @@ class FileAuditResult:
     def partial_count(self) -> int:
         """    Partial count.
 
-    Returns:
-        int: Description.
+        Returns:
+            int: Description.
     """
         return sum(1 for r in self.records if r.status == CoverageStatus.PARTIAL)
 
@@ -97,8 +97,8 @@ class FileAuditResult:
     def coverage_pct(self) -> float:
         """    Coverage pct.
 
-    Returns:
-        float: Description.
+        Returns:
+            float: Description.
     """
         return self.coverage_count / self.total if self.total else 1.0
 
@@ -106,8 +106,8 @@ class FileAuditResult:
     def mean_quality(self) -> Optional[float]:
         """    Mean quality.
 
-    Returns:
-        Optional[float]: Description.
+        Returns:
+            Optional[float]: Description.
     """
         scored = [r.quality.composite for r in self.records if r.quality]
         return sum(scored) / len(scored) if scored else None

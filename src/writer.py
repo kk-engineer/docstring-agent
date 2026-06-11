@@ -21,13 +21,27 @@ class _DocstringInserter(cst.CSTTransformer):
         self._class_stack: list[str] = []
 
     def _qualified(self, name: str) -> str:
-        """ qualified."""
+        """     qualified.
+
+    Args:
+        name (str): Description.
+
+    Returns:
+        str: Description.
+    """
         if self._class_stack:
             return f"{'.'.join(self._class_stack)}.{name}"
         return name
 
     def _get_body_indent(self, original_body: cst.BaseSuite) -> str:
-        """ get body indent."""
+        """     get body indent.
+
+    Args:
+        original_body (cst.BaseSuite): Description.
+
+    Returns:
+        str: Description.
+    """
         if isinstance(original_body, cst.IndentedBlock):
             header = original_body.header
             if header:
@@ -38,7 +52,15 @@ class _DocstringInserter(cst.CSTTransformer):
         return "    "
 
     def _make_docstring_stmt(self, text: str, indent: str) -> cst.SimpleStatementLine:
-        """ make docstring stmt."""
+        """     make docstring stmt.
+
+    Args:
+        text (str): Description.
+        indent (str): Description.
+
+    Returns:
+        cst.SimpleStatementLine: Description.
+    """
         lines = text.split("\n")
         single = len(lines) == 1 and len(text) <= 72
         if single:
@@ -53,7 +75,14 @@ class _DocstringInserter(cst.CSTTransformer):
         )
 
     def _has_docstring(self, body: cst.BaseSuite) -> bool:
-        """ has docstring."""
+        """     has docstring.
+
+    Args:
+        body (cst.BaseSuite): Description.
+
+    Returns:
+        bool: Description.
+    """
         if isinstance(body, cst.IndentedBlock):
             stmts = body.body
             if stmts:
@@ -143,7 +172,16 @@ class _DocstringInserter(cst.CSTTransformer):
     def _insert_docstring(
         self, body: cst.BaseSuite, docstring: str, indent: str
     ) -> cst.BaseSuite:
-        """ insert docstring."""
+        """     insert docstring.
+
+    Args:
+        body (cst.BaseSuite): Description.
+        docstring (str): Description.
+        indent (str): Description.
+
+    Returns:
+        cst.BaseSuite: Description.
+    """
         new_stmt = self._make_docstring_stmt(docstring, indent)
 
         if isinstance(body, cst.IndentedBlock):
@@ -231,7 +269,13 @@ class DocstringWriter:
             return result
 
     def _print_diff(self, file_path: Path, source: str, new_source: str) -> None:
-        """ print diff."""
+        """     print diff.
+
+    Args:
+        file_path (Path): Description.
+        source (str): Description.
+        new_source (str): Description.
+    """
         diff = difflib.unified_diff(
             source.splitlines(keepends=True),
             new_source.splitlines(keepends=True),
@@ -243,7 +287,12 @@ class DocstringWriter:
             self.logger.output_data(f"Diff for {file_path}:\n{diff_text}")
 
     def _atomic_write(self, file_path: Path, new_source: str) -> None:
-        """ atomic write."""
+        """     atomic write.
+
+    Args:
+        file_path (Path): Description.
+        new_source (str): Description.
+    """
         tmp_path = file_path.with_suffix(".py.tmp")
         try:
             tmp_path.write_text(new_source, encoding="utf-8")

@@ -12,6 +12,19 @@ def _make_record(
     cyclomatic_complexity: int = 1,
     qualified_name: str = "test_func",
 ) -> CoverageRecord:
+    """     make record.
+
+    Args:
+        existing_docstring (str | None): Description.
+        param_count (int): Description.
+        has_return_annotation (bool): Description.
+        has_raise_statements (bool): Description.
+        cyclomatic_complexity (int): Description.
+        qualified_name (str): Description.
+
+    Returns:
+        CoverageRecord: Description.
+    """
     return CoverageRecord(
         file_path=Path("/fake/file.py"),
         qualified_name=qualified_name,

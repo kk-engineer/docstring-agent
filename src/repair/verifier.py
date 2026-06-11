@@ -7,6 +7,7 @@ from typing import Optional
 from ..audit.models import CoverageRecord, CoverageStatus, QualityScore
 from ..audit.scorer import QualityScorer
 from ..config import Config
+from ..generators.heuristic import HeuristicGenerator
 from ..logger import Logger
 from ..models import MethodRecord
 from ..parser import CSTParser
@@ -16,6 +17,7 @@ from .models import RepairResult, RepairStrategy, RepairSummary, RepairWorkItem
 class RepairVerifier:
     """Repairverifier."""
     def __init__(self, config: Config) -> None:
+        """Initialise RepairVerifier."""
         self.config = config
         self.logger = Logger.get_instance()
         self.scorer = QualityScorer(0.65)
@@ -29,8 +31,8 @@ class RepairVerifier:
         """    Verify results.
 
     Args:
-        results (list[RepairResult]): Description.
-        work_items (Optional[list[RepairWorkItem]]): Description.
+        results (list[RepairResult]): Collection of results.
+        work_items (Optional[list[RepairWorkItem]]): Work items.
 
     Returns:
         list[RepairResult]: Description.
@@ -63,7 +65,7 @@ class RepairVerifier:
         """    Verify.
 
     Args:
-        summary (RepairSummary): Description.
+        summary (RepairSummary): Summary.
 
     Returns:
         RepairSummary: Description.
@@ -89,6 +91,14 @@ class RepairVerifier:
         return summary
 
     def _reparse_file(self, file_path: Path) -> list[MethodRecord]:
+        """     reparse file.
+
+    Args:
+        file_path (Path): Path to the file.
+
+    Returns:
+        list[MethodRecord]: Description.
+    """
         try:
             return self.parser.parse_file(file_path)
         except Exception:
@@ -97,6 +107,15 @@ class RepairVerifier:
     def _find_record(
         self, records: list[MethodRecord], qualified_name: str
     ) -> Optional[MethodRecord]:
+        """     find record.
+
+    Args:
+        records (list[MethodRecord]): Collection of records.
+        qualified_name (str): Qualified name.
+
+    Returns:
+        Optional[MethodRecord]: Description.
+    """
         for r in records:
             if r.qualified_name == qualified_name:
                 return r
@@ -105,6 +124,15 @@ class RepairVerifier:
     def _build_coverage_record(
         self, mr: MethodRecord, docstring: str
     ) -> CoverageRecord:
+        """     build coverage record.
+
+    Args:
+        mr (MethodRecord): Mr.
+        docstring (str): Docstring.
+
+    Returns:
+        CoverageRecord: Description.
+    """
         return CoverageRecord(
             file_path=mr.file_path,
             qualified_name=mr.qualified_name,
@@ -119,5 +147,8 @@ class RepairVerifier:
                 mr.return_annotation
                 and mr.return_annotation.strip().lower() not in ("none", "")
             ),
-            has_raise_statements="raise" in mr.full_body.lower(),
+            has_raise_statements=bool(
+                HeuristicGenerator(self.config.docstring_gen.docstring_style)
+                ._extract_raises(mr.full_body)
+            ),
         )
