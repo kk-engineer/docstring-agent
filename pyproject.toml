@@ -1,7 +1,7 @@
 [project]
 name = "docstring-agent"
 version = "0.1.0"
-description = "NOLLM-first docstring generator: adds and improves Python docstrings using static analysis and selective LLM synthesis"
+description = "Smart Python docstrings on autopilot — template, heuristic & LLM-powered generation, audit, and repair"
 requires-python = ">=3.11, <3.14"
 dependencies = [
     "click>=8.1",
