@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from docstring_agent.generators.heuristic import HeuristicGenerator
-from docstring_agent.generators.template import TemplateGenerator
-from docstring_agent.models import MethodRecord, ParamInfo
+from src.generators.heuristic import HeuristicGenerator
+from src.generators.template import TemplateGenerator
+from src.models import MethodRecord, ParamInfo
 
 
 def _record(

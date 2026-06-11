@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from docstring_agent.walker import FileWalker
+from src.walker import FileWalker
 
 
 def test_walker_skip_dirs(tmp_path: Path) -> None:

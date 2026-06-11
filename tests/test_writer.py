@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from docstring_agent.models import MethodRecord, ParamInfo
-from docstring_agent.writer import DocstringWriter
+from src.models import MethodRecord, ParamInfo
+from src.writer import DocstringWriter
 from tests.conftest import SAMPLE_NO_DOCS
 
 

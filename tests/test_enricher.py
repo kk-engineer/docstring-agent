@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 import pytest
 
-from docstring_agent.config import Config, DocstringGenConfig
-from docstring_agent.enricher import Enricher
-from docstring_agent.models import MethodRecord, ParamInfo, RouteDecision
+from src.config import Config, DocstringGenConfig
+from src.enricher import Enricher
+from src.models import MethodRecord, ParamInfo, RouteDecision
 
 
 def _make_config(
@@ -126,7 +126,7 @@ def test_route_llm_high_complexity() -> None:
     assert result == RouteDecision.LLM
 
 
-@patch("docstring_agent.enricher.cc_visit")
+@patch("src.enricher.cc_visit")
 def test_complexity_computation(mock_cc_visit) -> None:
     """    Test complexity computation.
 

@@ -15,16 +15,17 @@ dependencies = [
 ]
 
 [project.scripts]
-docstring-agent = "docstring_agent.cli:cli"
-docstring-agent-generate = "docstring_agent.cli:generate"
-docstring-agent-audit = "docstring_agent.cli:audit"
+docstring-agent = "src.cli:cli"
+docstring-agent-generate = "src.cli:generate"
+docstring-agent-audit = "src.cli:audit"
+docstring-agent-repair = "src.cli:repair"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/docstring_agent"]
+packages = ["src"]
 
 [tool.uv]
 dev-dependencies = [

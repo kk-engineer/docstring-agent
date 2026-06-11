@@ -1,8 +1,8 @@
 from pathlib import Path
 
-from docstring_agent.audit.auditor import CoverageAuditor
-from docstring_agent.audit.models import CoverageStatus
-from docstring_agent.models import MethodRecord, ParamInfo
+from src.audit.auditor import CoverageAuditor
+from src.audit.models import CoverageStatus
+from src.models import MethodRecord, ParamInfo
 
 
 def _make_record(

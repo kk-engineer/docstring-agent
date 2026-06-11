@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from docstring_agent.config import AppConfig, Config, DocstringGenConfig, LLMConfig
-from docstring_agent.logger import Logger
+from src.config import AppConfig, Config, DocstringGenConfig, LLMConfig
+from src.logger import Logger
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 SAMPLE_NO_DOCS = FIXTURES_DIR / "sample_no_docs.py"

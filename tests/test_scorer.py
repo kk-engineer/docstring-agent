@@ -1,7 +1,7 @@
 from pathlib import Path
 
-from docstring_agent.audit.models import CoverageRecord, CoverageStatus, QualityScore
-from docstring_agent.audit.scorer import QualityScorer
+from src.audit.models import CoverageRecord, CoverageStatus, QualityScore
+from src.audit.scorer import QualityScorer
 
 
 def _make_record(

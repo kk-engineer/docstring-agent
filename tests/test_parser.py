@@ -1,4 +1,4 @@
-from docstring_agent.parser import CSTParser
+from src.parser import CSTParser
 from tests.conftest import SAMPLE_NO_DOCS, SAMPLE_WITH_DOCS, SAMPLE_COMPLEX
 
 

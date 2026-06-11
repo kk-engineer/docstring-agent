@@ -2,9 +2,9 @@ import asyncio
 import json
 from pathlib import Path
 
-from docstring_agent.audit.models import AuditReport
-from docstring_agent.audit.pipeline import AuditPipeline
-from docstring_agent.config import AppConfig, AuditConfig, Config, DocstringGenConfig, LLMConfig
+from src.audit.models import AuditReport
+from src.audit.pipeline import AuditPipeline
+from src.config import AppConfig, AuditConfig, Config, DocstringGenConfig, LLMConfig
 
 FIXTURES_DIR = Path(__file__).parent / "fixtures"
 
@@ -60,8 +60,8 @@ def test_json_output_is_valid() -> None:
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())
 
-    from docstring_agent.audit.report import ReportFormatter
-    from docstring_agent.logger import Logger
+    from src.audit.report import ReportFormatter
+    from src.logger import Logger
 
     logger = Logger.get_instance()
     formatter = ReportFormatter(cfg, logger)
@@ -82,8 +82,8 @@ def test_markdown_output_contains_header() -> None:
     pipeline = AuditPipeline(FIXTURES_DIR, cfg)
     report = asyncio.run(pipeline.run())
 
-    from docstring_agent.audit.report import ReportFormatter
-    from docstring_agent.logger import Logger
+    from src.audit.report import ReportFormatter
+    from src.logger import Logger
 
     logger = Logger.get_instance()
     formatter = ReportFormatter(cfg, logger)
